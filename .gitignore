@@ -1,6 +1,15 @@
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
+
+### Local environment ###
+.env
+.env.*
+!.env.example
+
+### Logs and OS files ###
+*.log
+.DS_Store
 !**/src/main/**/target/
 !**/src/test/**/target/
 

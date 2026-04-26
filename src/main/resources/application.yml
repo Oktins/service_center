@@ -3,9 +3,9 @@ spring:
     name: service-center
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/service_center
-    username: sc_user
-    password: sc_password
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/service_center}
+    username: ${DB_USERNAME:sc_user}
+    password: ${DB_PASSWORD:sc_password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -24,25 +24,25 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
   security:
     oauth2:
       client:
         registration:
           github:
-            client-id: PLACEHOLDER
-            client-secret: PLACEHOLDER
+            client-id: ${GITHUB_CLIENT_ID:PLACEHOLDER}
+            client-secret: ${GITHUB_CLIENT_SECRET:PLACEHOLDER}
             scope: user:email, read:user
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 jwt:
-  secret: "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"
-  expiration: 86400000
-  refresh-expiration: 604800000
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration: ${JWT_EXPIRATION:86400000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
 
 logging:
   level:
