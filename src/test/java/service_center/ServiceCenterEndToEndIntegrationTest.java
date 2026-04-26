@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import service_center.domain.entity.EquipmentType;
 import service_center.domain.entity.User;
@@ -22,11 +23,15 @@ import service_center.dto.request.SparePartCreateDto;
 import service_center.dto.request.SparePartUsageDto;
 import service_center.repository.EquipmentTypeRepository;
 import service_center.repository.UserRepository;
+import service_center.service.GeocodingService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -49,8 +54,13 @@ class ServiceCenterEndToEndIntegrationTest {
     @Autowired
     private EquipmentTypeRepository equipmentTypeRepository;
 
+    @MockitoBean
+    private GeocodingService geocodingService;
+
     @Test
     void completeServiceCenterBusinessProcessRecalculatesMasterRating() throws Exception {
+        when(geocodingService.geocodeSafe(anyString())).thenReturn(Optional.empty());
+
         String suffix = UUID.randomUUID().toString();
 
         EquipmentType equipmentType = equipmentTypeRepository.save(EquipmentType.builder()

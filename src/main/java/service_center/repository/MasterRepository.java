@@ -17,6 +17,8 @@ public interface MasterRepository extends JpaRepository<Master, Long> {
 
     Page<Master> findAllByIsAvailableTrue(Pageable pageable);
 
+    long countByIsAvailableTrue();
+
     @Query("SELECT m FROM Master m ORDER BY m.rating DESC")
     Page<Master> findAllOrderByRatingDesc(Pageable pageable);
 }

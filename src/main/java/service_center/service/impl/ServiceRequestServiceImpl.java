@@ -1,6 +1,7 @@
 package service_center.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,19 @@ import service_center.domain.entity.ServiceRequest;
 import service_center.domain.entity.User;
 import service_center.domain.enums.RequestStatus;
 import service_center.domain.exception.ResourceNotFoundException;
+import service_center.dto.GeocodingResult;
 import service_center.dto.request.ServiceRequestCreateDto;
 import service_center.dto.response.ServiceRequestResponse;
 import service_center.repository.EquipmentTypeRepository;
 import service_center.repository.MasterRepository;
 import service_center.repository.ServiceRequestRepository;
 import service_center.repository.UserRepository;
+import service_center.service.GeocodingService;
 import service_center.service.ServiceRequestService;
 
+import java.math.BigDecimal;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ServiceRequestServiceImpl implements ServiceRequestService {
@@ -29,6 +35,7 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
     // Внимание: Убедись, что интерфейс EquipmentTypeRepository создан 
     // (extends JpaRepository<EquipmentType, Long>)
     private final EquipmentTypeRepository equipmentTypeRepository;
+    private final GeocodingService geocodingService;
 
     @Override
     @Transactional
@@ -49,6 +56,13 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
                 .priority(dto.priority())
                 .status(RequestStatus.NEW)
                 .build();
+
+        try {
+            geocodingService.geocodeSafe(dto.address())
+                    .ifPresent(result -> applyCoordinates(request, result));
+        } catch (Exception ex) {
+            log.warn("Не удалось установить координаты для адреса '{}': {}", dto.address(), ex.getMessage());
+        }
 
         ServiceRequest savedRequest = serviceRequestRepository.save(request);
         return mapToResponse(savedRequest);
@@ -152,5 +166,10 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
                 request.getCreatedAt(),
                 request.getUpdatedAt()
         );
+    }
+
+    private void applyCoordinates(ServiceRequest request, GeocodingResult result) {
+        request.setLatitude(BigDecimal.valueOf(result.latitude()));
+        request.setLongitude(BigDecimal.valueOf(result.longitude()));
     }
 }
