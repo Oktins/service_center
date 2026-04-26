@@ -14,6 +14,7 @@ import service_center.domain.enums.RequestStatus;
 import service_center.domain.exception.ResourceNotFoundException;
 import service_center.dto.request.ServiceRequestCreateDto;
 import service_center.dto.response.ServiceRequestResponse;
+import service_center.observer.RequestStatusEventPublisher;
 import service_center.repository.EquipmentTypeRepository;
 import service_center.repository.MasterRepository;
 import service_center.repository.ServiceRequestRepository;
@@ -47,6 +48,9 @@ class ServiceRequestServiceImplTest {
 
     @Mock
     private GeocodingService geocodingService;
+
+    @Mock
+    private RequestStatusEventPublisher requestStatusEventPublisher;
 
     @InjectMocks
     private ServiceRequestServiceImpl serviceRequestService;
@@ -112,6 +116,7 @@ class ServiceRequestServiceImplTest {
 
         assertEquals(RequestStatus.COMPLETED, request.getStatus());
         assertEquals(RequestStatus.COMPLETED, response.status());
+        verify(requestStatusEventPublisher).publish(any());
     }
 
     @Test

@@ -10,11 +10,13 @@ import service_center.domain.entity.EquipmentType;
 import service_center.domain.entity.Master;
 import service_center.domain.entity.ServiceRequest;
 import service_center.domain.entity.User;
+import service_center.domain.event.RequestStatusChangedEvent;
 import service_center.domain.enums.RequestStatus;
 import service_center.domain.exception.ResourceNotFoundException;
 import service_center.dto.GeocodingResult;
 import service_center.dto.request.ServiceRequestCreateDto;
 import service_center.dto.response.ServiceRequestResponse;
+import service_center.observer.RequestStatusEventPublisher;
 import service_center.repository.EquipmentTypeRepository;
 import service_center.repository.MasterRepository;
 import service_center.repository.ServiceRequestRepository;
@@ -23,6 +25,7 @@ import service_center.service.GeocodingService;
 import service_center.service.ServiceRequestService;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -36,6 +39,7 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
     // (extends JpaRepository<EquipmentType, Long>)
     private final EquipmentTypeRepository equipmentTypeRepository;
     private final GeocodingService geocodingService;
+    private final RequestStatusEventPublisher requestStatusEventPublisher;
 
     @Override
     @Transactional
@@ -103,10 +107,16 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
         ServiceRequest request = serviceRequestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Заявка не найдена с ID: " + id));
 
+        RequestStatus oldStatus = request.getStatus();
         request.setStatus(status);
         ServiceRequest updatedRequest = serviceRequestRepository.save(request);
 
-        // TODO: Здесь мы внедрим паттерн Observer (Уведомление клиента/мастера о смене статуса)
+        requestStatusEventPublisher.publish(new RequestStatusChangedEvent(
+                id,
+                oldStatus,
+                status,
+                LocalDateTime.now()
+        ));
 
         return mapToResponse(updatedRequest);
     }
