@@ -178,5 +178,4 @@ export default function AboutPage() {
   );
 }
 
-// Declare leaflet type for dynamic import
-declare const L: typeof import('leaflet');
+// No additional declarations needed as leaflet is imported dynamically

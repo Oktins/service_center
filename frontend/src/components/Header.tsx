@@ -72,6 +72,9 @@ export default function Header() {
   const navLinks = [
     { to: '/', label: 'Главная' },
     { to: '/services', label: 'Услуги' },
+    { to: '/news', label: 'Новости' },
+    { to: '/faq', label: 'FAQ' },
+    { to: '/contacts', label: 'Контакты' },
     { to: '/about', label: 'О нас' },
   ];
 

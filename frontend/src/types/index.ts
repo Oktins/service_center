@@ -25,14 +25,7 @@ export const Priority = {
 } as const;
 export type Priority = typeof Priority[keyof typeof Priority];
 
-export const ServiceCategory = {
-  SMARTPHONE: 'SMARTPHONE',
-  WATCH: 'WATCH',
-  LAPTOP: 'LAPTOP',
-  TABLET: 'TABLET',
-  OTHER: 'OTHER',
-} as const;
-export type ServiceCategory = typeof ServiceCategory[keyof typeof ServiceCategory];
+// Removed ServiceCategory enum as it is now a DB entity
 
 export const DispatchStatus = {
   SCHEDULED: 'SCHEDULED',
@@ -57,6 +50,12 @@ export interface User {
   createdAt: string;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  subCategories?: Category[];
+}
+
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
@@ -69,7 +68,7 @@ export interface ServiceCatalog {
   name: string;
   description: string;
   basePrice: number;
-  category: ServiceCategory;
+  category: Category;
   imageUrl: string | null;
   isActive: boolean;
 }
@@ -194,7 +193,7 @@ export interface ServiceCatalogCreate {
   name: string;
   description: string;
   basePrice: number;
-  category: ServiceCategory;
+  categoryId: number;
   imageUrl: string;
   isActive: boolean;
 }
@@ -262,13 +261,7 @@ export const PRIORITY_LABELS: Record<Priority, string> = {
   [Priority.URGENT]: 'Срочный',
 };
 
-export const CATEGORY_LABELS: Record<ServiceCategory, string> = {
-  [ServiceCategory.SMARTPHONE]: 'Смартфоны',
-  [ServiceCategory.WATCH]: 'Часы',
-  [ServiceCategory.LAPTOP]: 'Ноутбуки',
-  [ServiceCategory.TABLET]: 'Планшеты',
-  [ServiceCategory.OTHER]: 'Другое',
-};
+// Removed CATEGORY_LABELS as categories are now dynamic
 
 export const ROLE_LABELS: Record<Role, string> = {
   [Role.CLIENT]: 'Клиент',

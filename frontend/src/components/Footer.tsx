@@ -39,13 +39,23 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-sm text-gray-400 hover:text-primary-400 transition-colors">
-                  О нас
+                <Link to="/news" className="text-sm text-gray-400 hover:text-primary-400 transition-colors">
+                  Новости
                 </Link>
               </li>
               <li>
-                <Link to="/login" className="text-sm text-gray-400 hover:text-primary-400 transition-colors">
-                  Личный кабинет
+                <Link to="/faq" className="text-sm text-gray-400 hover:text-primary-400 transition-colors">
+                  Вопросы и ответы
+                </Link>
+              </li>
+              <li>
+                <Link to="/contacts" className="text-sm text-gray-400 hover:text-primary-400 transition-colors">
+                  Контакты
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="text-sm text-gray-400 hover:text-primary-400 transition-colors">
+                  О компании
                 </Link>
               </li>
             </ul>

@@ -1,6 +1,5 @@
 import api from './axios';
-import type { ServiceCatalog, ServiceCatalogCreate } from '../types';
-import { ServiceCategory } from '../types';
+import type { ServiceCatalog, ServiceCatalogCreate, Category } from '../types';
 
 export const servicesApi = {
   getAll: async (): Promise<ServiceCatalog[]> => {
@@ -8,8 +7,13 @@ export const servicesApi = {
     return response.data;
   },
 
-  getByCategory: async (category: ServiceCategory): Promise<ServiceCatalog[]> => {
-    const response = await api.get<ServiceCatalog[]>(`/api/services/category/${category}`);
+  getByCategory: async (categoryId: number): Promise<ServiceCatalog[]> => {
+    const response = await api.get<ServiceCatalog[]>(`/api/services/category/${categoryId}`);
+    return response.data;
+  },
+
+  getCategories: async (): Promise<Category[]> => {
+    const response = await api.get<Category[]>('/api/categories/tree');
     return response.data;
   },
 

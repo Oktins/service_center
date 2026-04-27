@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { newsApi } from '../../api/news';
-import type { NewsCreate } from '../../types';
+import type { News, NewsCreate } from '../../types';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
 import { Plus, Edit, Trash2, X, Megaphone, Newspaper } from 'lucide-react';
@@ -47,7 +47,7 @@ export default function ManagerNewsPage() {
     },
   });
 
-  const handleOpenModal = (item?: any) => {
+  const handleOpenModal = (item?: News) => {
     if (item) {
       setEditingId(item.id);
       setForm({

@@ -14,6 +14,9 @@ import ServicesPage from './pages/ServicesPage';
 import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import NewsPage from './pages/NewsPage';
+import FaqPage from './pages/FaqPage';
+import ContactsPage from './pages/ContactsPage';
 
 // Dashboard Pages
 import DashboardRedirect from './pages/dashboard/DashboardRedirect';
@@ -62,6 +65,9 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/news" element={<NewsPage />} />
+            <Route path="/faq" element={<FaqPage />} />
+            <Route path="/contacts" element={<ContactsPage />} />
 
             {/* Личный кабинет */}
             <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>

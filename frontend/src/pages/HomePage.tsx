@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { servicesApi } from '../api/services';
@@ -13,23 +13,20 @@ import {
   ClipboardCheck,
   Users,
   Calendar,
-  Smartphone,
-  Watch,
-  Laptop,
-  Tablet,
-  HelpCircle,
   ChevronRight,
+  Settings,
 } from 'lucide-react';
-import type { ServiceCatalog } from '../types';
-import { ServiceCategory, CATEGORY_LABELS } from '../types';
+import type { ServiceCatalog, Category } from '../types';
 
 // Animated counter hook
-function useCounter(target: number, duration = 2000) {
+function useCounter(target: number, duration = 2000): [number, (node: HTMLDivElement | null) => void] {
   const [count, setCount] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
+  const [node, setNode] = useState<HTMLDivElement | null>(null);
   const started = useRef(false);
 
   useEffect(() => {
+    if (!node || started.current) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !started.current) {
@@ -43,27 +40,20 @@ function useCounter(target: number, duration = 2000) {
             if (progress < 1) requestAnimationFrame(animate);
           };
           requestAnimationFrame(animate);
+          observer.disconnect();
         }
       },
       { threshold: 0.3 }
     );
-    if (ref.current) observer.observe(ref.current);
+    observer.observe(node);
     return () => observer.disconnect();
-  }, [target, duration]);
+  }, [node, target, duration]);
 
-  return { count, ref };
+  return [count, setNode];
 }
 
-const CATEGORY_ICONS: Record<ServiceCategory, React.ReactNode> = {
-  [ServiceCategory.SMARTPHONE]: <Smartphone className="w-5 h-5" />,
-  [ServiceCategory.WATCH]: <Watch className="w-5 h-5" />,
-  [ServiceCategory.LAPTOP]: <Laptop className="w-5 h-5" />,
-  [ServiceCategory.TABLET]: <Tablet className="w-5 h-5" />,
-  [ServiceCategory.OTHER]: <HelpCircle className="w-5 h-5" />,
-};
-
 export default function HomePage() {
-  const [calcCategory, setCalcCategory] = useState<ServiceCategory | null>(null);
+  const [calcCategoryId, setCalcCategoryId] = useState<number | null>(null);
 
   const { data: services, isLoading: servicesLoading } = useQuery({
     queryKey: ['services'],
@@ -75,18 +65,25 @@ export default function HomePage() {
     queryFn: newsApi.getAll,
   });
 
-  const { data: mastersData } = useQuery({
-    queryKey: ['masters'],
-    queryFn: () => mastersApi.getAll(0, 6),
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: servicesApi.getCategories,
   });
 
-  const counter1 = useCounter(500);
-  const counter2 = useCounter(20);
-  const counter3 = useCounter(5);
+  const { data: mastersData } = useQuery({
+    queryKey: ['masters-home'],
+    queryFn: () => mastersApi.getAll(0, 3),
+  });
+
+  const [count1, setRef1] = useCounter(500);
+  const [count2, setRef2] = useCounter(20);
+  const [count3, setRef3] = useCounter(5);
 
   const filteredCalcServices = services?.filter(
-    (s) => calcCategory && s.category === calcCategory
+    (s) => calcCategoryId && s.category.id === calcCategoryId
   );
+
+  const selectedCategoryName = categories?.find(c => c.id === calcCategoryId)?.name;
 
   return (
     <div>
@@ -95,7 +92,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMxNmEzNGEiIGZpbGwtb3BhY2l0eT0iMC4wNCI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] " />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight text-balance">
               ServiceHub —{' '}
               <span className="text-primary-600">Профессиональный</span>{' '}
               ремонт техники
@@ -121,30 +118,30 @@ export default function HomePage() {
       <section className="py-16 bg-white dark:bg-gray-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div ref={counter1.ref} className="text-center">
+            <div ref={setRef1} className="text-center">
               <div className="flex items-center justify-center w-14 h-14 mx-auto mb-4 bg-primary-100 dark:bg-primary-900/20 rounded-2xl">
                 <ClipboardCheck className="w-7 h-7 text-primary-600" />
               </div>
               <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
-                {counter1.count}+
+                {count1}+
               </p>
               <p className="mt-1 text-gray-500 dark:text-gray-400">Выполненных заявок</p>
             </div>
-            <div ref={counter2.ref} className="text-center">
+            <div ref={setRef2} className="text-center">
               <div className="flex items-center justify-center w-14 h-14 mx-auto mb-4 bg-primary-100 dark:bg-primary-900/20 rounded-2xl">
                 <Users className="w-7 h-7 text-primary-600" />
               </div>
               <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
-                {counter2.count}
+                {count2}
               </p>
               <p className="mt-1 text-gray-500 dark:text-gray-400">Мастеров в команде</p>
             </div>
-            <div ref={counter3.ref} className="text-center">
+            <div ref={setRef3} className="text-center">
               <div className="flex items-center justify-center w-14 h-14 mx-auto mb-4 bg-primary-100 dark:bg-primary-900/20 rounded-2xl">
                 <Calendar className="w-7 h-7 text-primary-600" />
               </div>
               <p className="text-4xl font-extrabold text-gray-900 dark:text-white">
-                {counter3.count}
+                {count3}
               </p>
               <p className="mt-1 text-gray-500 dark:text-gray-400">Лет на рынке</p>
             </div>
@@ -194,26 +191,26 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="section-title mb-2">Онлайн-калькулятор</h2>
           <p className="section-subtitle mb-8">Выберите категорию устройства для расчёта стоимости</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-8">
-            {Object.values(ServiceCategory).map((cat) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
+            {categories?.map((cat: Category) => (
               <button
-                key={cat}
-                onClick={() => setCalcCategory(calcCategory === cat ? null : cat)}
+                key={cat.id}
+                onClick={() => setCalcCategoryId(calcCategoryId === cat.id ? null : cat.id)}
                 className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-                  calcCategory === cat
+                  calcCategoryId === cat.id
                     ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20 text-primary-600'
                     : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 hover:border-primary-300'
                 }`}
               >
-                {CATEGORY_ICONS[cat]}
-                <span className="text-xs font-medium">{CATEGORY_LABELS[cat]}</span>
+                <Settings className="w-5 h-5" />
+                <span className="text-xs font-medium">{cat.name}</span>
               </button>
             ))}
           </div>
-          {calcCategory && filteredCalcServices && filteredCalcServices.length > 0 && (
+          {calcCategoryId && filteredCalcServices && filteredCalcServices.length > 0 && (
             <div className="card p-6">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-                Услуги — {CATEGORY_LABELS[calcCategory]}
+                Услуги — {selectedCategoryName}
               </h3>
               <div className="space-y-3">
                 {filteredCalcServices.map((s: ServiceCatalog) => (
@@ -227,8 +224,10 @@ export default function HomePage() {
               </div>
             </div>
           )}
-          {calcCategory && filteredCalcServices && filteredCalcServices.length === 0 && (
-            <p className="text-center text-gray-500 py-8">Нет услуг в этой категории</p>
+          {calcCategoryId && filteredCalcServices && filteredCalcServices.length === 0 && (
+            <p className="text-center text-gray-500 py-8 bg-white dark:bg-gray-800 rounded-2xl">
+              В категории "{selectedCategoryName}" пока нет услуг для расчёта
+            </p>
           )}
         </div>
       </section>
