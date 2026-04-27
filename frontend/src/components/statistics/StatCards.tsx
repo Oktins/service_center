@@ -1,5 +1,5 @@
 import React from 'react';
-import { Statistics } from '../../types';
+import type { Statistics } from '../../types';
 import { Banknote, ClipboardList, Users } from 'lucide-react';
 
 interface StatCardsProps {

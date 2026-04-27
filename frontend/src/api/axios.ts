@@ -13,8 +13,9 @@ api.interceptors.request.use(
   (config) => {
     const url = config.url ?? '';
     const isAuthRequest = url.startsWith('/api/v1/auth/') || url.startsWith('/api/auth/');
+    const hasAuthorizationHeader = Boolean(config.headers.Authorization);
     const token = useAuthStore.getState().accessToken;
-    if (token && !isAuthRequest) {
+    if (token && !isAuthRequest && !hasAuthorizationHeader) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

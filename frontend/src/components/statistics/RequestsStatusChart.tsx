@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { Statistics } from '../../types';
+import type { Statistics } from '../../types';
 
 interface RequestsStatusChartProps {
   stats: Statistics;

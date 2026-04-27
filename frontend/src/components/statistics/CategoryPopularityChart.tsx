@@ -1,6 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Statistics } from '../../types';
+import type { Statistics } from '../../types';
 
 interface CategoryPopularityChartProps {
   stats: Statistics;

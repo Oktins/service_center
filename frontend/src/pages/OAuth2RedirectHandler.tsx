@@ -10,45 +10,46 @@ export default function OAuth2RedirectHandler() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const token = searchParams.get('token');
+  const refreshToken = searchParams.get('refreshToken');
+  const missingTokenError = !token || !refreshToken
+    ? 'Отсутствуют токен или refresh-токен в URL'
+    : null;
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    const refreshToken = searchParams.get('refreshToken');
-
-    if (!token || !refreshToken) {
-      setError('Отсутствуют токен или refresh-токен в URL');
-      setLoading(false);
+    if (missingTokenError) {
       return;
     }
+
+    let isMounted = true;
 
     const fetchUserAndLogin = async () => {
       try {
         const user = await usersApi.getCurrentUser(token);
-        setAuth(user, token, refreshToken);
+        setAuth(token, refreshToken, user);
         navigate('/dashboard', { replace: true });
       } catch (err) {
         console.error('Failed to fetch user profile:', err);
-        setError('Не удалось получить данные профиля пользователя');
+        if (isMounted) {
+          setError('Не удалось получить данные профиля пользователя');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchUserAndLogin();
-  }, [searchParams, setAuth, navigate]);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-        <LoadingSpinner />
-        <p className="mt-4 text-gray-600 font-medium animate-pulse">
-          Завершение авторизации, пожалуйста, подождите...
-        </p>
-      </div>
-    );
-  }
+    return () => {
+      isMounted = false;
+    };
+  }, [token, refreshToken, missingTokenError, setAuth, navigate]);
 
-  if (error) {
+  const visibleError = missingTokenError ?? error;
+
+  if (visibleError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
         <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border border-red-100">
@@ -58,7 +59,7 @@ export default function OAuth2RedirectHandler() {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Ошибка авторизации</h1>
-          <p className="text-gray-600 mb-8">{error}</p>
+          <p className="text-gray-600 mb-8">{visibleError}</p>
           <button
             onClick={() => navigate('/login')}
             className="w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
@@ -66,6 +67,17 @@ export default function OAuth2RedirectHandler() {
             Вернуться к входу
           </button>
         </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+        <LoadingSpinner />
+        <p className="mt-4 text-gray-600 font-medium animate-pulse">
+          Завершение авторизации, пожалуйста, подождите...
+        </p>
       </div>
     );
   }
