@@ -15,4 +15,11 @@ public interface ServiceRequestRepository extends JpaRepository<ServiceRequest, 
     List<ServiceRequest> findAllByStatus(RequestStatus status);
     Page<ServiceRequest> findAllByStatus(RequestStatus status, Pageable pageable);
     long countByStatus(RequestStatus status);
+
+    @org.springframework.data.jpa.repository.Query("SELECT SUM(sr.finalCost) FROM ServiceRequest sr WHERE sr.status = service_center.domain.enums.RequestStatus.COMPLETED")
+    java.math.BigDecimal sumTotalRevenue();
+
+    @org.springframework.data.jpa.repository.Query("SELECT new service_center.dto.response.StatisticsResponse$CategoryStat(sr.equipmentType.name, COUNT(sr)) " +
+           "FROM ServiceRequest sr GROUP BY sr.equipmentType.name")
+    List<service_center.dto.response.StatisticsResponse.CategoryStat> countByEquipmentType();
 }

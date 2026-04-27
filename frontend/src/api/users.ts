@@ -18,4 +18,10 @@ export const usersApi = {
     const response = await api.patch<User>(`/api/v1/users/${id}/role`, data);
     return response.data;
   },
+
+  getCurrentUser: async (token?: string): Promise<User> => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const response = await api.get<User>('/api/v1/users/me', config);
+    return response.data;
+  },
 };

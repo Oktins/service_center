@@ -158,6 +158,8 @@ export interface Statistics {
   cancelledRequests: number;
   availableMasters: number;
   totalSpareParts: number;
+  totalRevenue: number;
+  categoryStats: { name: string; count: number }[];
 }
 
 export interface CostCalculation {

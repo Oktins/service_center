@@ -41,7 +41,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 requestCountsByStatus.getOrDefault(RequestStatus.COMPLETED, 0L),
                 requestCountsByStatus.getOrDefault(RequestStatus.CANCELLED, 0L),
                 masterRepository.countByIsAvailableTrue(),
-                sparePartRepository.count()
+                sparePartRepository.count(),
+                serviceRequestRepository.sumTotalRevenue() != null ? serviceRequestRepository.sumTotalRevenue() : java.math.BigDecimal.ZERO,
+                serviceRequestRepository.countByEquipmentType()
         );
     }
 }
