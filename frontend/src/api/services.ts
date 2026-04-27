@@ -4,26 +4,26 @@ import { ServiceCategory } from '../types';
 
 export const servicesApi = {
   getAll: async (): Promise<ServiceCatalog[]> => {
-    const response = await api.get<ServiceCatalog[]>('/services');
+    const response = await api.get<ServiceCatalog[]>('/api/services');
     return response.data;
   },
 
   getByCategory: async (category: ServiceCategory): Promise<ServiceCatalog[]> => {
-    const response = await api.get<ServiceCatalog[]>(`/services/category/${category}`);
+    const response = await api.get<ServiceCatalog[]>(`/api/services/category/${category}`);
     return response.data;
   },
 
   create: async (data: ServiceCatalogCreate): Promise<ServiceCatalog> => {
-    const response = await api.post<ServiceCatalog>('/services', data);
+    const response = await api.post<ServiceCatalog>('/api/services', data);
     return response.data;
   },
 
   update: async (id: number, data: ServiceCatalogCreate): Promise<ServiceCatalog> => {
-    const response = await api.put<ServiceCatalog>(`/services/${id}`, data);
+    const response = await api.put<ServiceCatalog>(`/api/services/${id}`, data);
     return response.data;
   },
 
   delete: async (id: number): Promise<void> => {
-    await api.delete(`/services/${id}`);
+    await api.delete(`/api/services/${id}`);
   },
 };

@@ -22,7 +22,7 @@ export default function RegisterPage() {
     mutationFn: authApi.register,
     onSuccess: (data) => {
       login(data.accessToken, data.refreshToken, data.user);
-      navigate('/dashboard/my-requests');
+      navigate('/dashboard');
     },
   });
 

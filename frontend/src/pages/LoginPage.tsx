@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '../api/auth';
 import { useAuthStore } from '../store/authStore';
-import { Role } from '../types';
 import { LogIn, Eye, EyeOff, Wrench } from 'lucide-react';
 
 export default function LoginPage() {
@@ -18,13 +17,7 @@ export default function LoginPage() {
     mutationFn: authApi.login,
     onSuccess: (data) => {
       login(data.accessToken, data.refreshToken, data.user);
-      switch (data.user.role) {
-        case Role.CLIENT: navigate('/dashboard/my-requests'); break;
-        case Role.MASTER: navigate('/dashboard/pool'); break;
-        case Role.MANAGER: navigate('/dashboard/requests'); break;
-        case Role.ADMIN: navigate('/dashboard/users'); break;
-        default: navigate('/dashboard');
-      }
+      navigate('/dashboard');
     },
   });
 
