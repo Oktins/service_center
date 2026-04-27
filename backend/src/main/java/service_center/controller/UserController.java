@@ -40,4 +40,10 @@ public class UserController {
                                    @Valid @RequestBody UpdateUserRoleRequest request) {
         return userService.updateRole(id, request.role());
     }
+
+    @GetMapping("/me")
+    public UserResponse getMe() {
+        var authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        return userService.getByEmail(authentication.getName());
+    }
 }

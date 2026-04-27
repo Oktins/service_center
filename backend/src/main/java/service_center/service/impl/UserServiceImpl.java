@@ -47,6 +47,14 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(findUser(userId));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponse getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(this::mapToResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден с email: " + email));
+    }
+
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден с ID: " + userId));

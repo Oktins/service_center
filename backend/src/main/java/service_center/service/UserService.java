@@ -12,4 +12,6 @@ public interface UserService {
     Page<UserResponse> getAll(Pageable pageable);
 
     UserResponse getById(Long userId);
+
+    UserResponse getByEmail(String email);
 }
