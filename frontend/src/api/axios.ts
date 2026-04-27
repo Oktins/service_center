@@ -11,8 +11,10 @@ const api = axios.create({
 // Request interceptor: add Bearer token
 api.interceptors.request.use(
   (config) => {
+    const url = config.url ?? '';
+    const isAuthRequest = url.startsWith('/api/v1/auth/') || url.startsWith('/api/auth/');
     const token = useAuthStore.getState().accessToken;
-    if (token) {
+    if (token && !isAuthRequest) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

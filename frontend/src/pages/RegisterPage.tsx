@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import { authApi } from '../api/auth';
 import { useAuthStore } from '../store/authStore';
 import { UserPlus, Eye, EyeOff, Wrench } from 'lucide-react';
@@ -17,12 +18,30 @@ export default function RegisterPage() {
     phone: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const mutation = useMutation({
     mutationFn: authApi.register,
     onSuccess: (data) => {
-      login(data.accessToken, data.refreshToken, data.user);
-      navigate('/dashboard');
+      setErrorMessage('');
+      try {
+        login(data.accessToken, data.refreshToken, data.user);
+        navigate('/dashboard');
+      } catch (error) {
+        console.error('Register success handler error:', error);
+      }
+    },
+    onError: (error) => {
+      console.error('Register error:', error);
+      if (axios.isAxiosError<{ message?: string }>(error)) {
+        setErrorMessage(
+          error.response?.data?.message
+            ?? error.message
+            ?? 'Не удалось зарегистрироваться. Проверьте подключение и повторите попытку.'
+        );
+        return;
+      }
+      setErrorMessage('Не удалось зарегистрироваться. Проверьте подключение и повторите попытку.');
     },
   });
 
@@ -32,6 +51,7 @@ export default function RegisterPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage('');
     mutation.mutate(form);
   };
 
@@ -129,9 +149,9 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {mutation.isError && (
+          {errorMessage && (
             <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg text-sm text-red-600 dark:text-red-400">
-              Ошибка регистрации. Возможно, этот email уже используется.
+              {errorMessage}
             </div>
           )}
 
