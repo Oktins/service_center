@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import service_center.domain.enums.ServiceCategory;
 import service_center.dto.request.ServiceCatalogCreateDto;
 import service_center.dto.response.ServiceCatalogResponse;
 import service_center.service.ServiceCatalogService;
@@ -25,9 +24,9 @@ public class ServiceCatalogController {
         return ResponseEntity.ok(serviceCatalogService.getAll());
     }
 
-    @GetMapping("/category/{category}")
-    public ResponseEntity<List<ServiceCatalogResponse>> getByCategory(@PathVariable ServiceCategory category) {
-        return ResponseEntity.ok(serviceCatalogService.getByCategory(category));
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ServiceCatalogResponse>> getByCategory(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(serviceCatalogService.getByCategory(categoryId));
     }
 
     @PostMapping

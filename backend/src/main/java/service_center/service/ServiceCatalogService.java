@@ -1,6 +1,5 @@
 package service_center.service;
 
-import service_center.domain.enums.ServiceCategory;
 import service_center.dto.request.ServiceCatalogCreateDto;
 import service_center.dto.response.ServiceCatalogResponse;
 
@@ -12,5 +11,5 @@ public interface ServiceCatalogService {
     ServiceCatalogResponse getById(Long id);
     ServiceCatalogResponse update(Long id, ServiceCatalogCreateDto dto);
     void delete(Long id);
-    List<ServiceCatalogResponse> getByCategory(ServiceCategory category);
+    List<ServiceCatalogResponse> getByCategory(Long categoryId);
 }

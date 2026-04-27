@@ -3,7 +3,6 @@ package service_center.dto.request;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import service_center.domain.enums.ServiceCategory;
 
 import java.math.BigDecimal;
 
@@ -18,7 +17,7 @@ public record ServiceCatalogCreateDto(
         BigDecimal basePrice,
 
         @NotNull(message = "Категория обязательна")
-        ServiceCategory category,
+        Long categoryId,
 
         String imageUrl,
         boolean isActive

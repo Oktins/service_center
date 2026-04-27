@@ -2,7 +2,6 @@ package service_center.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import service_center.domain.enums.ServiceCategory;
 
 import java.math.BigDecimal;
 
@@ -27,9 +26,9 @@ public class ServiceCatalog {
     @Column(name = "base_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal basePrice;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ServiceCategory category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(name = "image_url")
     private String imageUrl;

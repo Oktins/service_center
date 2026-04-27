@@ -1,6 +1,5 @@
 package service_center.dto.response;
 
-import service_center.domain.enums.ServiceCategory;
 
 import java.math.BigDecimal;
 
@@ -9,7 +8,7 @@ public record ServiceCatalogResponse(
         String name,
         String description,
         BigDecimal basePrice,
-        ServiceCategory category,
+        CategoryResponse category,
         String imageUrl,
         boolean isActive
 ) {}

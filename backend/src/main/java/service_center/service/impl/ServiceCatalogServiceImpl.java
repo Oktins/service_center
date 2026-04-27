@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import service_center.domain.entity.ServiceCatalog;
-import service_center.domain.enums.ServiceCategory;
+import service_center.domain.entity.Category;
 import service_center.domain.exception.ResourceNotFoundException;
+import service_center.dto.response.CategoryResponse;
 import service_center.dto.request.ServiceCatalogCreateDto;
 import service_center.dto.response.ServiceCatalogResponse;
 import service_center.repository.ServiceCatalogRepository;
+import service_center.repository.CategoryRepository;
 import service_center.service.ServiceCatalogService;
 
 import java.util.List;
@@ -18,15 +20,19 @@ import java.util.List;
 public class ServiceCatalogServiceImpl implements ServiceCatalogService {
 
     private final ServiceCatalogRepository serviceCatalogRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional
     public ServiceCatalogResponse create(ServiceCatalogCreateDto dto) {
+        Category category = categoryRepository.findById(dto.categoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Категория не найдена с ID: " + dto.categoryId()));
+
         ServiceCatalog serviceCatalog = ServiceCatalog.builder()
                 .name(dto.name())
                 .description(dto.description())
                 .basePrice(dto.basePrice())
-                .category(dto.category())
+                .category(category)
                 .imageUrl(dto.imageUrl())
                 .isActive(dto.isActive())
                 .build();
@@ -50,11 +56,14 @@ public class ServiceCatalogServiceImpl implements ServiceCatalogService {
     @Override
     @Transactional
     public ServiceCatalogResponse update(Long id, ServiceCatalogCreateDto dto) {
+        Category category = categoryRepository.findById(dto.categoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Категория не найдена с ID: " + dto.categoryId()));
+
         ServiceCatalog serviceCatalog = getServiceCatalogEntity(id);
         serviceCatalog.setName(dto.name());
         serviceCatalog.setDescription(dto.description());
         serviceCatalog.setBasePrice(dto.basePrice());
-        serviceCatalog.setCategory(dto.category());
+        serviceCatalog.setCategory(category);
         serviceCatalog.setImageUrl(dto.imageUrl());
         serviceCatalog.setActive(dto.isActive());
         return mapToResponse(serviceCatalogRepository.save(serviceCatalog));
@@ -69,8 +78,8 @@ public class ServiceCatalogServiceImpl implements ServiceCatalogService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ServiceCatalogResponse> getByCategory(ServiceCategory category) {
-        return serviceCatalogRepository.findAllByCategoryAndIsActiveTrue(category).stream()
+    public List<ServiceCatalogResponse> getByCategory(Long categoryId) {
+        return serviceCatalogRepository.findAllByCategoryIdAndIsActiveTrue(categoryId).stream()
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -86,7 +95,11 @@ public class ServiceCatalogServiceImpl implements ServiceCatalogService {
                 serviceCatalog.getName(),
                 serviceCatalog.getDescription(),
                 serviceCatalog.getBasePrice(),
-                serviceCatalog.getCategory(),
+                serviceCatalog.getCategory() != null ? new CategoryResponse(
+                        serviceCatalog.getCategory().getId(),
+                        serviceCatalog.getCategory().getName(),
+                        null
+                ) : null,
                 serviceCatalog.getImageUrl(),
                 serviceCatalog.isActive()
         );
