@@ -11,7 +11,7 @@ export default function ServiceDetailModal({ service, onClose }: ServiceDetailMo
   const navigate = useNavigate();
 
   const handleCreateRequest = () => {
-    navigate('/dashboard/requests/new', {
+    navigate('/dashboard/new-request', {
       state: {
         selectedServiceId: service.id,
         selectedServiceName: service.name,

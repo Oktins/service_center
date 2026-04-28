@@ -18,6 +18,24 @@ import {
 } from 'lucide-react';
 import type { ServiceCatalog, Category } from '../types';
 
+function flattenCategories(categories: Category[]): Category[] {
+  return categories.flatMap((category) => [
+    category,
+    ...flattenCategories(category.subCategories || []),
+  ]);
+}
+
+function findCategory(categories: Category[], categoryId: number): Category | undefined {
+  return flattenCategories(categories).find((category) => category.id === categoryId);
+}
+
+function collectCategoryIds(category: Category): number[] {
+  return [
+    category.id,
+    ...(category.subCategories || []).flatMap((subCategory) => collectCategoryIds(subCategory)),
+  ];
+}
+
 function useCounter(target: number, duration = 2000): [number, (node: HTMLDivElement | null) => void] {
   const [count, setCount] = useState(0);
   const [node, setNode] = useState<HTMLDivElement | null>(null);
@@ -53,6 +71,8 @@ function useCounter(target: number, duration = 2000): [number, (node: HTMLDivEle
 
 export default function HomePage() {
   const [calcCategoryId, setCalcCategoryId] = useState<number | null>(null);
+  const [calcServices, setCalcServices] = useState<ServiceCatalog[]>([]);
+  const [calcServicesLoading, setCalcServicesLoading] = useState(false);
 
   const { data: services, isLoading: servicesLoading } = useQuery({
     queryKey: ['services'],
@@ -78,11 +98,45 @@ export default function HomePage() {
   const [count2, setRef2] = useCounter(20);
   const [count3, setRef3] = useCounter(5);
 
-  const filteredCalcServices = services?.filter(
-    (s) => calcCategoryId && s.category.id === calcCategoryId
-  );
+  const calcCategories = flattenCategories(categories || []);
+  const selectedCategory = calcCategoryId && categories ? findCategory(categories, calcCategoryId) : undefined;
+  const selectedCategoryName = selectedCategory?.name;
 
-  const selectedCategoryName = categories?.find(c => c.id === calcCategoryId)?.name;
+  useEffect(() => {
+    let isCancelled = false;
+
+    const loadCategoryServices = async () => {
+      if (!calcCategoryId || !selectedCategory) {
+        setCalcServices([]);
+        return;
+      }
+
+      setCalcServicesLoading(true);
+      try {
+        const categoryIds = collectCategoryIds(selectedCategory);
+        const responses = await Promise.all(
+          categoryIds.map((categoryId) => servicesApi.getByCategory(categoryId))
+        );
+        const uniqueServices = Array.from(
+          new Map(responses.flat().map((service) => [service.id, service])).values()
+        );
+
+        if (!isCancelled) {
+          setCalcServices(uniqueServices);
+        }
+      } finally {
+        if (!isCancelled) {
+          setCalcServicesLoading(false);
+        }
+      }
+    };
+
+    loadCategoryServices();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [calcCategoryId, selectedCategory]);
 
   return (
     <div>
@@ -191,7 +245,7 @@ export default function HomePage() {
           <h2 className="section-title mb-2">Онлайн-калькулятор</h2>
           <p className="section-subtitle mb-8">Выберите категорию устройства для расчёта стоимости</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
-            {categories?.map((cat: Category) => (
+            {calcCategories.map((cat: Category) => (
               <button
                 key={cat.id}
                 onClick={() => setCalcCategoryId(calcCategoryId === cat.id ? null : cat.id)}
@@ -206,13 +260,14 @@ export default function HomePage() {
               </button>
             ))}
           </div>
-          {calcCategoryId && filteredCalcServices && filteredCalcServices.length > 0 && (
+          {calcCategoryId && calcServicesLoading && <LoadingSpinner />}
+          {calcCategoryId && !calcServicesLoading && calcServices.length > 0 && (
             <div className="card p-6">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
                 Услуги — {selectedCategoryName}
               </h3>
               <div className="space-y-3">
-                {filteredCalcServices.map((s: ServiceCatalog) => (
+                {calcServices.map((s: ServiceCatalog) => (
                   <div key={s.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
                     <span className="text-sm text-gray-700 dark:text-gray-300">{s.name}</span>
                     <span className="text-sm font-semibold text-primary-600">
@@ -223,7 +278,7 @@ export default function HomePage() {
               </div>
             </div>
           )}
-          {calcCategoryId && filteredCalcServices && filteredCalcServices.length === 0 && (
+          {calcCategoryId && !calcServicesLoading && calcServices.length === 0 && (
             <p className="text-center text-gray-500 py-8 bg-white dark:bg-gray-800 rounded-2xl">
               В категории "{selectedCategoryName}" пока нет услуг для расчёта
             </p>
