@@ -150,6 +150,23 @@ export default function ManagerNewsPage() {
                 <label className="label">Текст</label>
                 <textarea className="input-field" rows={5} required value={form.content} onChange={e => setForm({...form, content: e.target.value})} />
               </div>
+              <div>
+                <label className="label">Ссылка на изображение</label>
+                <input
+                  type="url"
+                  className="input-field"
+                  value={form.imageUrl}
+                  onChange={e => setForm({...form, imageUrl: e.target.value})}
+                  placeholder="https://images.unsplash.com/..."
+                />
+                {form.imageUrl && (
+                  <img
+                    src={form.imageUrl}
+                    alt="Предпросмотр"
+                    className="mt-3 h-28 w-full rounded-lg object-cover"
+                  />
+                )}
+              </div>
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="isPromo" checked={form.isPromotion} onChange={e => setForm({...form, isPromotion: e.target.checked})} />
                 <label htmlFor="isPromo" className="text-sm font-medium">Это акция</label>

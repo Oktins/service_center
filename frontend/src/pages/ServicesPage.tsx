@@ -2,14 +2,17 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { servicesApi } from '../api/services';
 import ServiceCard from '../components/ServiceCard';
+import ServiceDetailModal from '../components/ServiceDetailModal';
 import CategoryAccordion from '../components/CategoryAccordion';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import { Search } from 'lucide-react';
+import type { ServiceCatalog } from '../types';
 
 export default function ServicesPage() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | 'ALL'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedService, setSelectedService] = useState<ServiceCatalog | null>(null);
 
   const { data: services, isLoading: isLoadingServices, error: errorServices, refetch: refetchServices } = useQuery({
     queryKey: ['services'],
@@ -80,7 +83,7 @@ export default function ServicesPage() {
           {filtered && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filtered.map((service) => (
-                <ServiceCard key={service.id} service={service} />
+                <ServiceCard key={service.id} service={service} onClick={() => setSelectedService(service)} />
               ))}
             </div>
           )}
@@ -103,6 +106,10 @@ export default function ServicesPage() {
           )}
         </div>
       </div>
+
+      {selectedService && (
+        <ServiceDetailModal service={selectedService} onClose={() => setSelectedService(null)} />
+      )}
     </div>
   );
 }

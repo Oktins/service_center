@@ -4,7 +4,7 @@ import { usersApi } from '../../api/users';
 import { Role, ROLE_LABELS } from '../../types';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
-import { Users, Shield, UserCog, User, Wrench } from 'lucide-react';
+import { Users, Shield, UserCog, User, Wrench, Plus, X } from 'lucide-react';
 
 const ROLE_ICONS: Record<Role, React.ReactNode> = {
   [Role.ADMIN]: <Shield className="w-4 h-4" />,
@@ -16,6 +16,14 @@ const ROLE_ICONS: Record<Role, React.ReactNode> = {
 export default function AdminUsersPage() {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    role: Role.CLIENT as Role,
+  });
 
   const { data: users, isLoading, error, refetch } = useQuery({
     queryKey: ['users-admin', currentPage],
@@ -30,13 +38,38 @@ export default function AdminUsersPage() {
     },
   });
 
+  const createMutation = useMutation({
+    mutationFn: usersApi.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users-admin'] });
+      setIsModalOpen(false);
+      setForm({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        role: Role.CLIENT,
+      });
+    },
+  });
+
+  const handleCreateUser = (event: React.FormEvent) => {
+    event.preventDefault();
+    createMutation.mutate(form);
+  };
+
   return (
     <div>
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/20 text-primary-600 rounded-xl flex items-center justify-center">
-          <Users className="w-5 h-5" />
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/20 text-primary-600 rounded-xl flex items-center justify-center">
+            <Users className="w-5 h-5" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Пользователи</h1>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Пользователи</h1>
+        <button type="button" onClick={() => setIsModalOpen(true)} className="btn-primary btn-sm">
+          <Plus className="w-4 h-4" /> Добавить пользователя
+        </button>
       </div>
 
       {isLoading && <LoadingSpinner />}
@@ -111,6 +144,56 @@ export default function AdminUsersPage() {
           >
             Вперёд →
           </button>
+        </div>
+      )}
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Новый пользователь</h3>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleCreateUser} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Имя</label>
+                  <input className="input" required value={form.firstName} onChange={e => setForm({...form, firstName: e.target.value})} />
+                </div>
+                <div>
+                  <label className="label">Фамилия</label>
+                  <input className="input" required value={form.lastName} onChange={e => setForm({...form, lastName: e.target.value})} />
+                </div>
+              </div>
+              <div>
+                <label className="label">Email</label>
+                <input type="email" className="input" required value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+              </div>
+              <div>
+                <label className="label">Пароль</label>
+                <input type="text" minLength={6} className="input" required value={form.password} onChange={e => setForm({...form, password: e.target.value})} />
+              </div>
+              <div>
+                <label className="label">Роль</label>
+                <select className="input" value={form.role} onChange={e => setForm({...form, role: e.target.value as Role})}>
+                  {Object.values(Role).map(role => (
+                    <option key={role} value={role}>{ROLE_LABELS[role]}</option>
+                  ))}
+                </select>
+              </div>
+              {createMutation.isError && (
+                <ErrorMessage message="Не удалось создать пользователя. Возможно, email уже используется." />
+              )}
+              <div className="pt-4 flex justify-end gap-3">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary">Отмена</button>
+                <button type="submit" disabled={createMutation.isPending} className="btn-primary">
+                  {createMutation.isPending ? 'Создание...' : 'Создать'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

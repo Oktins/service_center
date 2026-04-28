@@ -1,5 +1,5 @@
 import api from './axios';
-import type { User, Page, UpdateUserRole } from '../types';
+import type { User, Page, UpdateUserRole, CreateUserRequest } from '../types';
 
 export const usersApi = {
   getAll: async (page = 0, size = 20, sort = 'id,asc'): Promise<Page<User>> => {
@@ -11,6 +11,11 @@ export const usersApi = {
 
   getById: async (id: number): Promise<User> => {
     const response = await api.get<User>(`/api/v1/users/${id}`);
+    return response.data;
+  },
+
+  create: async (data: CreateUserRequest): Promise<User> => {
+    const response = await api.post<User>('/api/v1/users/create', data);
     return response.data;
   },
 

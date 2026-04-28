@@ -10,10 +10,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import service_center.dto.request.CreateUserRequest;
 import service_center.dto.request.UpdateUserRoleRequest;
 import service_center.dto.response.UserResponse;
 import service_center.service.UserService;
@@ -30,6 +32,12 @@ public class UserController {
     public Page<UserResponse> getAll(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return userService.getAll(pageable);
+    }
+
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse create(@Valid @RequestBody CreateUserRequest request) {
+        return userService.create(request);
     }
 
     @GetMapping("/{id}")

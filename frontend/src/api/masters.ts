@@ -1,5 +1,5 @@
 import api from './axios';
-import type { Master, Page } from '../types';
+import type { Master, Page, CreateMasterProfileRequest } from '../types';
 
 export const mastersApi = {
   getAll: async (page = 0, size = 20, sort = 'id,asc'): Promise<Page<Master>> => {
@@ -11,6 +11,13 @@ export const mastersApi = {
 
   getById: async (id: number): Promise<Master> => {
     const response = await api.get<Master>(`/api/masters/${id}`);
+    return response.data;
+  },
+
+  createProfile: async ({ userId, specialization, experienceYears }: CreateMasterProfileRequest): Promise<Master> => {
+    const response = await api.post<Master>(`/api/masters/user/${userId}`, null, {
+      params: { specialization, experienceYears },
+    });
     return response.data;
   },
 

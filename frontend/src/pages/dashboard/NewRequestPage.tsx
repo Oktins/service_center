@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { requestsApi } from '../../api/requests';
 import { servicesApi } from '../../api/services';
@@ -9,6 +9,8 @@ import { Send, FileText, MapPin } from 'lucide-react';
 
 export default function NewRequestPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectedService = location.state as { selectedServiceId?: number; selectedServiceName?: string } | null;
   const [form, setForm] = useState<{
     title: string;
     description: string;
@@ -16,7 +18,7 @@ export default function NewRequestPage() {
     address: string;
     priority: Priority;
   }>({
-    title: '',
+    title: selectedService?.selectedServiceName || '',
     description: '',
     equipmentTypeId: 1, // По-умолчанию пока 1
     address: '',
@@ -74,7 +76,11 @@ export default function NewRequestPage() {
                     key={s.id}
                     type="button"
                     onClick={() => handleSelectService(s.id, s.name)}
-                    className="px-3 py-1.5 text-xs rounded-full border border-gray-200 dark:border-gray-700 hover:bg-primary-50 hover:text-primary-600 hover:border-primary-200 dark:hover:bg-primary-900/20 transition-colors text-gray-600 dark:text-gray-400"
+                    className={`px-3 py-1.5 text-xs rounded-full border transition-colors ${
+                      selectedService?.selectedServiceId === s.id
+                        ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:bg-primary-50 hover:text-primary-600 hover:border-primary-200 dark:hover:bg-primary-900/20 text-gray-600 dark:text-gray-400'
+                    }`}
                   >
                     {s.name}
                   </button>

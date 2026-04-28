@@ -233,6 +233,20 @@ export interface UpdateUserRole {
   role: Role;
 }
 
+export interface CreateUserRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: Role;
+}
+
+export interface CreateMasterProfileRequest {
+  userId: number;
+  specialization: string;
+  experienceYears: number;
+}
+
 // ============ PAGINATION ============
 
 export interface Page<T> {

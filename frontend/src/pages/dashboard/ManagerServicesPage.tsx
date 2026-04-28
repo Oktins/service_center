@@ -106,36 +106,41 @@ export default function ManagerServicesPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {services?.map(service => (
-          <div key={service.id} className={`card p-6 flex flex-col ${!service.isActive && 'opacity-60'}`}>
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold text-primary-600 uppercase tracking-wide">
-                {service.category.name}
-              </span>
-              <div className="flex gap-2">
-                <button onClick={() => handleOpenModal(service)} className="text-gray-400 hover:text-blue-500">
-                  <Edit className="w-4 h-4" />
-                </button>
-                <button 
-                  onClick={() => {
-                    if (window.confirm('Удалить эту услугу?')) {
-                      deleteMutation.mutate(service.id);
-                    }
-                  }} 
-                  className="text-gray-400 hover:text-red-500"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+          <div key={service.id} className={`card overflow-hidden flex flex-col ${!service.isActive && 'opacity-60'}`}>
+            {service.imageUrl && (
+              <img src={service.imageUrl} alt={service.name} className="h-40 w-full object-cover" />
+            )}
+            <div className="flex flex-1 flex-col p-6">
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-xs font-bold text-primary-600 uppercase tracking-wide">
+                  {service.category.name}
+                </span>
+                <div className="flex gap-2">
+                  <button onClick={() => handleOpenModal(service)} className="text-gray-400 hover:text-blue-500">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (window.confirm('Удалить эту услугу?')) {
+                        deleteMutation.mutate(service.id);
+                      }
+                    }}
+                    className="text-gray-400 hover:text-red-500"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-            </div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{service.name}</h3>
-            <p className="text-sm text-gray-500 mb-4 flex-1">{service.description}</p>
-            <div className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 pt-4 mt-auto">
-              <span className="text-lg font-bold text-gray-900 dark:text-white">
-                {service.basePrice.toLocaleString('ru-RU')} ₽
-              </span>
-              <span className={`text-xs px-2 py-1 rounded-full ${service.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                {service.isActive ? 'Активна' : 'Скрыта'}
-              </span>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{service.name}</h3>
+              <p className="text-sm text-gray-500 mb-4 flex-1">{service.description}</p>
+              <div className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 pt-4 mt-auto">
+                <span className="text-lg font-bold text-gray-900 dark:text-white">
+                  {service.basePrice.toLocaleString('ru-RU')} ₽
+                </span>
+                <span className={`text-xs px-2 py-1 rounded-full ${service.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                  {service.isActive ? 'Активна' : 'Скрыта'}
+                </span>
+              </div>
             </div>
           </div>
         ))}
@@ -179,6 +184,23 @@ export default function ManagerServicesPage() {
               <div>
                 <label className="label">Описание</label>
                 <textarea className="input" rows={3} value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+              </div>
+              <div>
+                <label className="label">Ссылка на изображение</label>
+                <input
+                  type="url"
+                  className="input"
+                  value={form.imageUrl}
+                  onChange={e => setForm({...form, imageUrl: e.target.value})}
+                  placeholder="https://images.unsplash.com/..."
+                />
+                {form.imageUrl && (
+                  <img
+                    src={form.imageUrl}
+                    alt="Предпросмотр"
+                    className="mt-3 h-32 w-full rounded-lg object-cover"
+                  />
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="isActive" checked={form.isActive} onChange={e => setForm({...form, isActive: e.target.checked})} />
