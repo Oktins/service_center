@@ -67,26 +67,30 @@ public class DatabaseSeeder {
     }
 
     private void seedUsers() {
-        if (userRepository.count() == 0) {
-            userRepository.saveAll(List.of(
-                    user("admin@service.com", "admin123", "Алексей", "Администраторов", Role.ADMIN),
-                    user("superadmin@service.com", "admin123", "Марина", "Главная", Role.ADMIN),
-                    user("manager@service.com", "manager123", "Ирина", "Соколова", Role.MANAGER),
-                    user("manager2@service.com", "manager123", "Павел", "Орлов", Role.MANAGER),
-                    user("manager3@service.com", "manager123", "Елена", "Морозова", Role.MANAGER),
-                    user("master@service.com", "master123", "Дмитрий", "Кузнецов", Role.MASTER),
-                    user("master2@service.com", "master123", "Сергей", "Волков", Role.MASTER),
-                    user("master3@service.com", "master123", "Антон", "Фёдоров", Role.MASTER),
-                    user("master4@service.com", "master123", "Николай", "Павлов", Role.MASTER),
-                    user("master5@service.com", "master123", "Олег", "Романов", Role.MASTER),
-                    user("client@service.com", "client123", "Ольга", "Иванова", Role.CLIENT),
-                    user("client2@service.com", "client123", "Михаил", "Петров", Role.CLIENT),
-                    user("client3@service.com", "client123", "Наталья", "Смирнова", Role.CLIENT),
-                    user("client4@service.com", "client123", "Андрей", "Новиков", Role.CLIENT),
-                    user("client5@service.com", "client123", "Виктория", "Лебедева", Role.CLIENT)
-            ));
-            log.info("Users seeded.");
+        List<User> usersToSeed = List.of(
+                user("admin@service.com", "admin123", "Алексей", "Администраторов", Role.ADMIN),
+                user("superadmin@service.com", "admin123", "Марина", "Главная", Role.ADMIN),
+                user("manager@service.com", "manager123", "Ирина", "Соколова", Role.MANAGER),
+                user("manager2@service.com", "manager123", "Павел", "Орлов", Role.MANAGER),
+                user("manager3@service.com", "manager123", "Елена", "Морозова", Role.MANAGER),
+                user("master@service.com", "master123", "Дмитрий", "Кузнецов", Role.MASTER),
+                user("master2@service.com", "master123", "Сергей", "Волков", Role.MASTER),
+                user("master3@service.com", "master123", "Антон", "Фёдоров", Role.MASTER),
+                user("master4@service.com", "master123", "Николай", "Павлов", Role.MASTER),
+                user("master5@service.com", "master123", "Олег", "Романов", Role.MASTER),
+                user("client@service.com", "client123", "Ольга", "Иванова", Role.CLIENT),
+                user("client2@service.com", "client123", "Михаил", "Петров", Role.CLIENT),
+                user("client3@service.com", "client123", "Наталья", "Смирнова", Role.CLIENT),
+                user("client4@service.com", "client123", "Андрей", "Новиков", Role.CLIENT),
+                user("client5@service.com", "client123", "Виктория", "Лебедева", Role.CLIENT)
+        );
+
+        for (User user : usersToSeed) {
+            if (!userRepository.existsByEmail(user.getEmail())) {
+                userRepository.save(user);
+            }
         }
+        log.info("Users seeded.");
     }
 
     private User user(String email, String password, String firstName, String lastName, Role role) {
@@ -262,7 +266,7 @@ public class DatabaseSeeder {
     }
 
     private void seedServiceRequests() {
-        if (serviceRequestRepository.count() > 0) {
+        if (serviceRequestRepository.count() >= 15) {
             return;
         }
 
