@@ -271,7 +271,7 @@ export default function HomePage() {
                   <div key={s.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
                     <span className="text-sm text-gray-700 dark:text-gray-300">{s.name}</span>
                     <span className="text-sm font-semibold text-primary-600">
-                      от {s.basePrice.toLocaleString('ru-RU')} ₽
+                      от {s.basePrice.toLocaleString('ru-BY')} Br
                     </span>
                   </div>
                 ))}

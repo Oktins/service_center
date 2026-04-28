@@ -61,7 +61,7 @@ export default function ServiceDetailModal({ service, onClose }: ServiceDetailMo
             <div>
               <div className="text-xs font-medium uppercase text-gray-500">Стоимость</div>
               <div className="text-2xl font-bold text-primary-600">
-                от {service.basePrice.toLocaleString('ru-RU')} ₽
+                от {service.basePrice.toLocaleString('ru-BY')} Br
               </div>
             </div>
             <button type="button" onClick={handleCreateRequest} className="btn-primary">

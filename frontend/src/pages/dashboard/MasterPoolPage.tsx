@@ -76,7 +76,7 @@ export default function MasterPoolPage() {
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 flex-shrink-0 text-primary-500" />
-                <span>{new Date(req.createdAt).toLocaleString('ru-RU')}</span>
+                <span>{new Date(req.createdAt).toLocaleString('ru-BY')}</span>
               </div>
             </div>
 

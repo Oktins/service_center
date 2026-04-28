@@ -41,7 +41,7 @@ export default function ServiceCard({ service, onClick }: ServiceCardProps) {
 
         <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
           <span className="text-lg font-bold text-primary-600">
-            от {service.basePrice.toLocaleString('ru-RU')} ₽
+            от {service.basePrice.toLocaleString('ru-BY')} Br
           </span>
           {onClick && (
             <button type="button" className="text-sm font-medium text-primary-600 hover:text-primary-700">

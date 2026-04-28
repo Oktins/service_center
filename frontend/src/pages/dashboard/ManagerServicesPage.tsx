@@ -135,7 +135,7 @@ export default function ManagerServicesPage() {
               <p className="text-sm text-gray-500 mb-4 flex-1">{service.description}</p>
               <div className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 pt-4 mt-auto">
                 <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  {service.basePrice.toLocaleString('ru-RU')} ₽
+                  {service.basePrice.toLocaleString('ru-BY')} Br
                 </span>
                 <span className={`text-xs px-2 py-1 rounded-full ${service.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {service.isActive ? 'Активна' : 'Скрыта'}
@@ -178,7 +178,7 @@ export default function ManagerServicesPage() {
                 </select>
               </div>
               <div>
-                <label className="label">Базовая цена (₽)</label>
+                <label className="label">Базовая цена (Br)</label>
                 <input type="number" min="0" className="input" required value={form.basePrice} onChange={e => setForm({...form, basePrice: Number(e.target.value)})} />
               </div>
               <div>

@@ -97,7 +97,7 @@ export default function AdminUsersPage() {
                   <div className="text-xs text-gray-500">{user.phone || 'Нет телефона'}</div>
                 </td>
                 <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                  {new Date(user.createdAt).toLocaleDateString('ru-RU')}
+                  {new Date(user.createdAt).toLocaleDateString('ru-BY')}
                 </td>
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2">

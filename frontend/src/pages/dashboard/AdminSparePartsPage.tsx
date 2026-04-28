@@ -134,7 +134,7 @@ export default function AdminSparePartsPage() {
               </div>
               <p className="text-sm text-gray-500">Артикул: {part.article || '—'}</p>
               <div className="mt-2 text-sm">
-                <span className="font-semibold text-gray-900 dark:text-white">{part.price} ₽</span> / {part.unit}
+                <span className="font-semibold text-gray-900 dark:text-white">{part.price} Br</span> / {part.unit}
               </div>
             </div>
 
@@ -217,7 +217,7 @@ export default function AdminSparePartsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="label">Цена продажи (₽) *</label>
+                  <label className="label">Цена продажи (Br) *</label>
                   <input type="number" min="0" step="0.01" className="input-field" required value={form.price} onChange={e => setForm({...form, price: Number(e.target.value)})} />
                 </div>
                 <div>

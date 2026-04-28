@@ -133,7 +133,7 @@ export default function AboutPage() {
                 <div>
                   <h3 className="font-medium text-gray-900 dark:text-white">Адрес</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    г. Москва, ул. Примерная, д. 1
+                    г. Минск, ул. Примерная, д. 1
                   </p>
                 </div>
               </div>

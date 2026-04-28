@@ -115,7 +115,7 @@ export default function NewRequestPage() {
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               className="input-field"
-              placeholder="г. Москва, ул. Ленина, д. 1, кв. 2"
+              placeholder="г. Минск, ул. Ленина, д. 1, кв. 2"
               required
             />
           </div>

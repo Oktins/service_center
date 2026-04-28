@@ -85,13 +85,13 @@ export default function MyRequestsPage() {
                 <div className="flex flex-wrap gap-4 text-xs text-gray-400">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    {new Date(req.createdAt).toLocaleDateString('ru-RU')}
+                    {new Date(req.createdAt).toLocaleDateString('ru-BY')}
                   </span>
                   <span>Приоритет: {PRIORITY_LABELS[req.priority]}</span>
                   <span>Оборудование: {req.equipmentTypeName}</span>
                   {req.masterName && <span>Мастер: {req.masterName}</span>}
                   {req.estimatedCost && (
-                    <span>Стоимость: {req.estimatedCost.toLocaleString('ru-RU')} ₽</span>
+                    <span>Стоимость: {req.estimatedCost.toLocaleString('ru-BY')} Br</span>
                   )}
                 </div>
               </div>

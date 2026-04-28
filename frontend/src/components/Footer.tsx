@@ -77,7 +77,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-400">
                 <MapPin className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
-                г. Москва, ул. Примерная, д. 1
+                г. Минск, ул. Примерная, д. 1
               </li>
             </ul>
           </div>

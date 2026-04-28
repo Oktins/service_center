@@ -49,7 +49,7 @@ const AddPartModal = ({ spareParts, onClose, onUse, isPending }: AddPartModalPro
               <option value={0} disabled>-- Выберите из списка --</option>
               {spareParts?.content.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name} (Остаток: {p.quantity} {p.unit}) - {p.price} ₽
+                  {p.name} (Остаток: {p.quantity} {p.unit}) - {p.price} Br
                 </option>
               ))}
             </select>

@@ -155,43 +155,43 @@ public class DatabaseSeeder {
         updateExistingServiceImages();
 
         createServiceIfMissing("Замена экрана iPhone 13", "Замена поврежденного дисплея на новый оригинальный.",
-                "15000.00", "Смартфоны", PHONE_IMAGE);
+                "499.00", "Смартфоны", PHONE_IMAGE);
         createServiceIfMissing("Замена аккумулятора Samsung S21", "Установка новой батареи повышенной емкости.",
-                "4500.00", "Смартфоны", PHONE_IMAGE);
+                "149.00", "Смартфоны", PHONE_IMAGE);
         createServiceIfMissing("Прошивка Android", "Обновление или восстановление системного ПО.",
-                "1500.00", "Смартфоны", PHONE_IMAGE);
+                "49.00", "Смартфоны", PHONE_IMAGE);
         createServiceIfMissing("Чистка после залития", "Удаление окислов и восстановление после контакта с водой.",
-                "3000.00", "Смартфоны", PHONE_IMAGE);
+                "99.00", "Смартфоны", PHONE_IMAGE);
         createServiceIfMissing("Замена стекла iPad Air", "Замена сенсорного стекла без замены матрицы.",
-                "8000.00", "Планшеты", TABLET_IMAGE);
+                "269.00", "Планшеты", TABLET_IMAGE);
         createServiceIfMissing("Ремонт разъема зарядки", "Пайка или замена порта USB-C / Lightning.",
-                "2500.00", "Планшеты", TABLET_IMAGE);
+                "79.00", "Планшеты", TABLET_IMAGE);
         createServiceIfMissing("Замена двигателя Dyson", "Профессиональная замена вышедшего из строя мотора.",
-                "12000.00", "Пылесосы", VACUUM_IMAGE);
+                "399.00", "Пылесосы", VACUUM_IMAGE);
         createServiceIfMissing("Чистка фильтров и циклонного блока", "Глубокая очистка всех внутренних элементов.",
-                "2000.00", "Пылесосы", VACUUM_IMAGE);
+                "69.00", "Пылесосы", VACUUM_IMAGE);
         createServiceIfMissing("Диагностика ноутбука", "Комплексная проверка питания, материнской платы, накопителя и системы охлаждения.",
-                "1200.00", "Ноутбуки", LAPTOP_IMAGE);
+                "39.00", "Ноутбуки", LAPTOP_IMAGE);
         createServiceIfMissing("Замена матрицы ноутбука", "Подбор и установка новой матрицы с проверкой шлейфа и подсветки.",
-                "9500.00", "Ноутбуки", LAPTOP_IMAGE);
+                "319.00", "Ноутбуки", LAPTOP_IMAGE);
         createServiceIfMissing("Чистка ноутбука с заменой термопасты", "Профилактика перегрева, чистка кулеров и замена термоинтерфейса.",
-                "3500.00", "Ноутбуки", LAPTOP_IMAGE);
+                "119.00", "Ноутбуки", LAPTOP_IMAGE);
         createServiceIfMissing("Апгрейд настольного ПК", "Установка SSD, оперативной памяти, видеокарты и настройка BIOS.",
-                "2800.00", "Настольные ПК", LAPTOP_IMAGE);
+                "89.00", "Настольные ПК", LAPTOP_IMAGE);
         createServiceIfMissing("Сборка игрового ПК", "Профессиональная сборка, кабель-менеджмент и стресс-тест комплектующих.",
-                "6500.00", "Настольные ПК", LAPTOP_IMAGE);
+                "219.00", "Настольные ПК", LAPTOP_IMAGE);
         createServiceIfMissing("Ремонт лазерного принтера", "Устранение замятий, полос печати, замена роликов и термопленки.",
-                "4200.00", "Принтеры и МФУ", PRINTER_IMAGE);
+                "139.00", "Принтеры и МФУ", PRINTER_IMAGE);
         createServiceIfMissing("Заправка и обслуживание МФУ", "Заправка картриджа, чистка тракта подачи бумаги и настройка печати.",
-                "1800.00", "Принтеры и МФУ", PRINTER_IMAGE);
+                "59.00", "Принтеры и МФУ", PRINTER_IMAGE);
         createServiceIfMissing("Чистка PlayStation 5", "Разборка, удаление пыли, замена термопрокладок и проверка охлаждения.",
-                "4500.00", "PlayStation", CONSOLE_IMAGE);
+                "149.00", "PlayStation", CONSOLE_IMAGE);
         createServiceIfMissing("Замена HDMI PlayStation", "Пайка нового HDMI-разъема после механического повреждения.",
-                "6000.00", "PlayStation", CONSOLE_IMAGE);
+                "199.00", "PlayStation", CONSOLE_IMAGE);
         createServiceIfMissing("Ремонт геймпада Xbox", "Замена стиков, кнопок, триггеров и устранение дрифта.",
-                "2500.00", "Xbox", CONSOLE_IMAGE);
+                "79.00", "Xbox", CONSOLE_IMAGE);
         createServiceIfMissing("Восстановление питания Xbox Series", "Диагностика цепей питания и ремонт платы консоли.",
-                "7000.00", "Xbox", CONSOLE_IMAGE);
+                "229.00", "Xbox", CONSOLE_IMAGE);
 
         log.info("Services seeded.");
     }
@@ -206,7 +206,17 @@ public class DatabaseSeeder {
     }
 
     private void createServiceIfMissing(String name, String description, String price, String categoryName, String imageUrl) {
+        BigDecimal basePrice = new BigDecimal(price);
+
         if (serviceCatalogRepository.existsByName(name)) {
+            serviceCatalogRepository.findAll().stream()
+                    .filter(service -> service.getName().equals(name))
+                    .findFirst()
+                    .ifPresent(service -> {
+                        service.setBasePrice(basePrice);
+                        service.setImageUrl(imageUrl);
+                        serviceCatalogRepository.save(service);
+                    });
             return;
         }
 
@@ -218,7 +228,7 @@ public class DatabaseSeeder {
         serviceCatalogRepository.save(ServiceCatalog.builder()
                 .name(name)
                 .description(description)
-                .basePrice(new BigDecimal(price))
+                .basePrice(basePrice)
                 .category(category)
                 .imageUrl(imageUrl)
                 .isActive(true)
@@ -281,21 +291,21 @@ public class DatabaseSeeder {
         }
 
         List<RequestSeed> seeds = List.of(
-                new RequestSeed("Не включается iPhone после падения", "Телефон упал, экран черный, вибрация есть.", "г. Минск, пр-т Независимости, 45", "Смартфон", RequestStatus.NEW, Priority.HIGH, "15000.00", null),
-                new RequestSeed("Ноутбук сильно шумит", "Греется и выключается при запуске игр.", "г. Минск, ул. Сурганова, 12", "Ноутбук", RequestStatus.ASSIGNED, Priority.MEDIUM, "3500.00", null),
-                new RequestSeed("Полосы при печати", "Лазерный принтер печатает с серыми полосами.", "г. Минск, ул. Немига, 8", "Принтер/МФУ", RequestStatus.IN_PROGRESS, Priority.MEDIUM, "4200.00", null),
-                new RequestSeed("PlayStation перегревается", "Через 20 минут появляется предупреждение о перегреве.", "г. Минск, ул. Кальварийская, 21", "Игровая консоль", RequestStatus.COMPLETED, Priority.HIGH, "4500.00", "4500.00"),
-                new RequestSeed("Пылесос потерял мощность", "Dyson плохо всасывает, фильтры давно не чистились.", "г. Минск, ул. Богдановича, 67", "Пылесос", RequestStatus.COMPLETED, Priority.LOW, "2000.00", "2000.00"),
-                new RequestSeed("Xbox не выводит изображение", "На телевизоре нет сигнала, кабель проверен.", "г. Минск, ул. Притыцкого, 34", "Игровая консоль", RequestStatus.NEW, Priority.URGENT, "7000.00", null),
-                new RequestSeed("Разбит экран планшета", "iPad Air после удара, сенсор частично работает.", "г. Минск, ул. Маяковского, 16", "Планшет", RequestStatus.ASSIGNED, Priority.MEDIUM, "8000.00", null),
-                new RequestSeed("Компьютер не загружается", "После обновления комплектующих не проходит POST.", "г. Минск, ул. Якуба Коласа, 30", "Настольный ПК", RequestStatus.IN_PROGRESS, Priority.HIGH, "2800.00", null),
-                new RequestSeed("Замена аккумулятора Samsung", "Быстро разряжается и выключается на 20%.", "г. Минск, ул. Пулихова, 3", "Смартфон", RequestStatus.COMPLETED, Priority.MEDIUM, "4500.00", "4500.00"),
-                new RequestSeed("Заправка МФУ в офисе", "Нужно заправить картридж и настроить сетевую печать.", "г. Минск, ул. Интернациональная, 25", "Принтер/МФУ", RequestStatus.NEW, Priority.LOW, "1800.00", null),
-                new RequestSeed("Дрифт стика геймпада Xbox", "Левый стик уводит персонажа вверх.", "г. Минск, ул. Ленина, 10", "Игровая консоль", RequestStatus.CANCELLED, Priority.LOW, "2500.00", null),
-                new RequestSeed("Сборка игрового ПК", "Нужно собрать новый ПК из купленных комплектующих.", "г. Минск, ул. Кирова, 5", "Настольный ПК", RequestStatus.ASSIGNED, Priority.MEDIUM, "6500.00", null),
-                new RequestSeed("Нет зарядки у ноутбука", "Разъем питания болтается, заряд идет не всегда.", "г. Минск, ул. Орловская, 41", "Ноутбук", RequestStatus.IN_PROGRESS, Priority.HIGH, "5200.00", null),
-                new RequestSeed("После воды не работает экран", "Телефон попал под дождь, появились пятна на дисплее.", "г. Минск, ул. Куйбышева, 91", "Смартфон", RequestStatus.COMPLETED, Priority.URGENT, "3000.00", "3000.00"),
-                new RequestSeed("Консоль PlayStation не читает диск", "Привод щелкает и возвращает диск.", "г. Минск, ул. Тимирязева, 72", "Игровая консоль", RequestStatus.NEW, Priority.MEDIUM, "6000.00", null)
+                new RequestSeed("Не включается iPhone после падения", "Телефон упал, экран черный, вибрация есть.", "г. Минск, пр-т Независимости, 45", "Смартфон", RequestStatus.NEW, Priority.HIGH, "499.00", null),
+                new RequestSeed("Ноутбук сильно шумит", "Греется и выключается при запуске игр.", "г. Минск, ул. Сурганова, 12", "Ноутбук", RequestStatus.ASSIGNED, Priority.MEDIUM, "119.00", null),
+                new RequestSeed("Полосы при печати", "Лазерный принтер печатает с серыми полосами.", "г. Минск, ул. Немига, 8", "Принтер/МФУ", RequestStatus.IN_PROGRESS, Priority.MEDIUM, "139.00", null),
+                new RequestSeed("PlayStation перегревается", "Через 20 минут появляется предупреждение о перегреве.", "г. Минск, ул. Кальварийская, 21", "Игровая консоль", RequestStatus.COMPLETED, Priority.HIGH, "149.00", "149.00"),
+                new RequestSeed("Пылесос потерял мощность", "Dyson плохо всасывает, фильтры давно не чистились.", "г. Минск, ул. Богдановича, 67", "Пылесос", RequestStatus.COMPLETED, Priority.LOW, "69.00", "69.00"),
+                new RequestSeed("Xbox не выводит изображение", "На телевизоре нет сигнала, кабель проверен.", "г. Минск, ул. Притыцкого, 34", "Игровая консоль", RequestStatus.NEW, Priority.URGENT, "229.00", null),
+                new RequestSeed("Разбит экран планшета", "iPad Air после удара, сенсор частично работает.", "г. Минск, ул. Маяковского, 16", "Планшет", RequestStatus.ASSIGNED, Priority.MEDIUM, "269.00", null),
+                new RequestSeed("Компьютер не загружается", "После обновления комплектующих не проходит POST.", "г. Минск, ул. Якуба Коласа, 30", "Настольный ПК", RequestStatus.IN_PROGRESS, Priority.HIGH, "89.00", null),
+                new RequestSeed("Замена аккумулятора Samsung", "Быстро разряжается и выключается на 20%.", "г. Минск, ул. Пулихова, 3", "Смартфон", RequestStatus.COMPLETED, Priority.MEDIUM, "149.00", "149.00"),
+                new RequestSeed("Заправка МФУ в офисе", "Нужно заправить картридж и настроить сетевую печать.", "г. Минск, ул. Интернациональная, 25", "Принтер/МФУ", RequestStatus.NEW, Priority.LOW, "59.00", null),
+                new RequestSeed("Дрифт стика геймпада Xbox", "Левый стик уводит персонажа вверх.", "г. Минск, ул. Ленина, 10", "Игровая консоль", RequestStatus.CANCELLED, Priority.LOW, "79.00", null),
+                new RequestSeed("Сборка игрового ПК", "Нужно собрать новый ПК из купленных комплектующих.", "г. Минск, ул. Кирова, 5", "Настольный ПК", RequestStatus.ASSIGNED, Priority.MEDIUM, "219.00", null),
+                new RequestSeed("Нет зарядки у ноутбука", "Разъем питания болтается, заряд идет не всегда.", "г. Минск, ул. Орловская, 41", "Ноутбук", RequestStatus.IN_PROGRESS, Priority.HIGH, "169.00", null),
+                new RequestSeed("После воды не работает экран", "Телефон попал под дождь, появились пятна на дисплее.", "г. Минск, ул. Куйбышева, 91", "Смартфон", RequestStatus.COMPLETED, Priority.URGENT, "99.00", "99.00"),
+                new RequestSeed("Консоль PlayStation не читает диск", "Привод щелкает и возвращает диск.", "г. Минск, ул. Тимирязева, 72", "Игровая консоль", RequestStatus.NEW, Priority.MEDIUM, "199.00", null)
         );
 
         for (int i = 0; i < seeds.size(); i++) {

@@ -10,7 +10,7 @@ const StatCards: React.FC<StatCardsProps> = ({ stats }) => {
   const cards = [
     {
       title: 'Общая выручка',
-      value: `${stats.totalRevenue.toLocaleString()} ₽`,
+      value: `${stats.totalRevenue.toLocaleString('ru-BY')} Br`,
       icon: Banknote,
       color: 'bg-emerald-50 text-emerald-600',
       description: 'Доход от завершенных заявок',
