@@ -48,7 +48,6 @@ public class DispatchServiceImpl implements DispatchService {
         }
 
         // TODO: Интеграция с Google Maps Geocoding API
-        // Позже здесь мы будем получать latitude и longitude на основе адреса из request
 
         Dispatch dispatch = Dispatch.builder()
                 .serviceRequest(request)
@@ -58,7 +57,6 @@ public class DispatchServiceImpl implements DispatchService {
                 .status(DispatchStatus.SCHEDULED)
                 .build();
 
-        // Обновляем статус заявки и привязываем мастера
         request.setStatus(RequestStatus.ASSIGNED);
         request.setMaster(master);
         serviceRequestRepository.save(request);
@@ -100,12 +98,11 @@ public class DispatchServiceImpl implements DispatchService {
 
         dispatch.setStatus(status);
 
-        // Автоматически проставляем время начала и завершения выезда
         if (status == DispatchStatus.IN_PROGRESS && dispatch.getStartedAt() == null) {
             dispatch.setStartedAt(LocalDateTime.now());
         } else if (status == DispatchStatus.COMPLETED && dispatch.getCompletedAt() == null) {
             dispatch.setCompletedAt(LocalDateTime.now());
-            // Переводим саму заявку в статус В РАБОТЕ, так как выезд окончен, но ремонт может еще идти
+
             dispatch.getServiceRequest().setStatus(RequestStatus.IN_PROGRESS);
             serviceRequestRepository.save(dispatch.getServiceRequest());
         }

@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import service_center.dto.response.MasterResponse;
 
 public interface MasterService {
-    // Создание профиля мастера для существующего пользователя
+
     MasterResponse createProfile(Long userId, String specialization, Integer experienceYears);
 
     MasterResponse getById(Long id);

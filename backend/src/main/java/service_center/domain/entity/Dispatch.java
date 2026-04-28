@@ -27,11 +27,9 @@ public class Dispatch {
     @JoinColumn(name = "master_id", nullable = false)
     private Master master;
 
-    // Время, на которое назначен выезд
     @Column(name = "scheduled_at", nullable = false)
     private LocalDateTime scheduledAt;
 
-    // Фактическое время начала и конца работ (из твоего DTO)
     @Column(name = "started_at")
     private LocalDateTime startedAt;
 
@@ -42,11 +40,9 @@ public class Dispatch {
     @Column(nullable = false)
     private DispatchStatus status;
 
-    // Заметки диспетчера (из твоего DTO)
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    // Координаты для Google Maps API
     private BigDecimal latitude;
     private BigDecimal longitude;
 

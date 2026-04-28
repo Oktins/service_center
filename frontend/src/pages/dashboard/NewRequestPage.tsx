@@ -20,7 +20,7 @@ export default function NewRequestPage() {
   }>({
     title: selectedService?.selectedServiceName || '',
     description: '',
-    equipmentTypeId: 1, // По-умолчанию пока 1
+    equipmentTypeId: 1,
     address: '',
     priority: Priority.MEDIUM,
   });

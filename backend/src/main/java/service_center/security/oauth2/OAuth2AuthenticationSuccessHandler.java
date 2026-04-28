@@ -52,7 +52,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String provider = authToken.getAuthorizedClientRegistrationId();
 
         String email = extractEmail(oauth2User, provider);
-        String oauthId = oauth2User.getName(); // Usually the internal ID
+        String oauthId = oauth2User.getName();
 
         if (email == null) {
             log.error("Email not found in OAuth2 provider: {}", provider);
@@ -63,7 +63,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> createNewUser(email, oauth2User, provider, oauthId));
 
-        // Update provider info if not set
         if (user.getOauthProvider() == null) {
             user.setOauthProvider(provider);
             user.setOauthId(oauthId);
@@ -73,7 +72,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String accessToken = jwtService.generateAccessToken(user.getEmail());
         String refreshToken = jwtService.generateRefreshToken(user.getEmail());
 
-        // Save refresh token
         RefreshToken tokenEntity = RefreshToken.builder()
                 .token(refreshToken)
                 .user(user)
@@ -89,7 +87,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     private String extractEmail(OAuth2User oauth2User, String provider) {
         if ("github".equals(provider)) {
-            // GitHub might return list of emails or just one in attributes
+
             return (String) oauth2User.getAttribute("email");
         } else if ("google".equals(provider)) {
             return (String) oauth2User.getAttribute("email");
@@ -109,7 +107,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                 lastName = parts[1];
             }
         } else {
-            // Fallback for GitHub username
+
             String login = oauth2User.getAttribute("login");
             if (login != null) firstName = login;
         }

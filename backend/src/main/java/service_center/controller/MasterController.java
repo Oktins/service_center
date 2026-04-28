@@ -19,7 +19,6 @@ public class MasterController {
 
     private final MasterService masterService;
 
-    // 1. Создать профиль мастера (для существующего пользователя с ролью MASTER)
     @PostMapping("/user/{userId}")
     @PreAuthorize("hasAnyRole('MANAGER','ADMIN','MASTER')")
     public ResponseEntity<MasterResponse> createProfile(
@@ -30,33 +29,28 @@ public class MasterController {
                 .body(masterService.createProfile(userId, specialization, experienceYears));
     }
 
-    // 2. Получить профиль по ID мастера
     @GetMapping("/{id}")
     public ResponseEntity<MasterResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(masterService.getById(id));
     }
 
-    // 3. Получить профиль мастера по ID пользователя (User)
     @GetMapping("/user/{userId}")
     public ResponseEntity<MasterResponse> getByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(masterService.getByUserId(userId));
     }
 
-    // 4. Получить список всех мастеров (с пагинацией)
     @GetMapping
     public ResponseEntity<Page<MasterResponse>> getAll(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(masterService.getAll(pageable));
     }
 
-    // 5. Получить список только доступных мастеров (для назначения на выезд)
     @GetMapping("/available")
     public ResponseEntity<Page<MasterResponse>> getAvailableMasters(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(masterService.getAvailableMasters(pageable));
     }
 
-    // 6. Изменить статус доступности мастера (например, когда он ушел в отпуск)
     @PatchMapping("/{id}/availability")
     public ResponseEntity<MasterResponse> updateAvailability(
             @PathVariable Long id,

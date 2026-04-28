@@ -13,13 +13,10 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    // Пагинация для отзывов
     Page<Review> findAllByMasterId(Long masterId, Pageable pageable);
 
-    // Проверка, оставлял ли клиент уже отзыв на эту заявку
     Optional<Review> findByServiceRequestId(Long serviceRequestId);
 
-    // Магия SQL: считаем среднюю оценку мастера
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.master.id = :masterId")
     Double calculateAverageRatingByMasterId(@Param("masterId") Long masterId);
 }

@@ -35,7 +35,6 @@ public class SparePartUsageServiceImpl implements SparePartUsageService {
         SparePart part = sparePartRepository.findById(dto.sparePartId())
                 .orElseThrow(() -> new ResourceNotFoundException("Запчасть не найдена с ID: " + dto.sparePartId()));
 
-        // Валидация остатков (Выбрасываем вашу кастомную ошибку)
         if (part.getQuantity() < dto.quantity()) {
             throw new InsufficientStockException(
                     part.getName(),
@@ -44,11 +43,9 @@ public class SparePartUsageServiceImpl implements SparePartUsageService {
             );
         }
 
-        // Списываем со склада
         part.setQuantity(part.getQuantity() - dto.quantity());
         sparePartRepository.save(part);
 
-        // Записываем историю использования с фиксацией цены на момент списания
         SparePartUsage usage = SparePartUsage.builder()
                 .serviceRequest(request)
                 .sparePart(part)
@@ -69,6 +66,6 @@ public class SparePartUsageServiceImpl implements SparePartUsageService {
     @Transactional(readOnly = true)
     public BigDecimal calculateTotalCost(Long serviceRequestId) {
         BigDecimal total = usageRepository.calculateTotalCostByRequest(serviceRequestId);
-        return total != null ? total : BigDecimal.ZERO; // Защита от null, если деталей не было
+        return total != null ? total : BigDecimal.ZERO;
     }
 }

@@ -12,12 +12,9 @@ import java.util.Optional;
 @Repository
 public interface DispatchRepository extends JpaRepository<Dispatch, Long> {
 
-    // Найти выезд по ID заявки (для проверки, назначен ли уже мастер)
     Optional<Dispatch> findByServiceRequestId(Long serviceRequestId);
 
-    // Получить историю выездов конкретного мастера (с пагинацией)
     Page<Dispatch> findAllByMasterId(Long masterId, Pageable pageable);
 
-    // Получить все выезды по их статусу (например, SCHEDULED - запланированные)
     Page<Dispatch> findAllByStatus(DispatchStatus status, Pageable pageable);
 }

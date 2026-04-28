@@ -1,4 +1,4 @@
-// ============ ENUMS ============
+
 
 export const Role = {
   CLIENT: 'CLIENT',
@@ -25,8 +25,6 @@ export const Priority = {
 } as const;
 export type Priority = typeof Priority[keyof typeof Priority];
 
-// Removed ServiceCategory enum as it is now a DB entity
-
 export const DispatchStatus = {
   SCHEDULED: 'SCHEDULED',
   EN_ROUTE: 'EN_ROUTE',
@@ -36,8 +34,6 @@ export const DispatchStatus = {
   CANCELLED: 'CANCELLED',
 } as const;
 export type DispatchStatus = typeof DispatchStatus[keyof typeof DispatchStatus];
-
-// ============ ENTITIES ============
 
 export interface User {
   id: number;
@@ -168,8 +164,6 @@ export interface CostCalculation {
   strategy: string;
 }
 
-// ============ REQUEST DTOs ============
-
 export interface LoginRequest {
   email: string;
   password: string;
@@ -247,8 +241,6 @@ export interface CreateMasterProfileRequest {
   experienceYears: number;
 }
 
-// ============ PAGINATION ============
-
 export interface Page<T> {
   content: T[];
   totalElements: number;
@@ -259,8 +251,6 @@ export interface Page<T> {
   last: boolean;
   empty: boolean;
 }
-
-// ============ STATUS LABELS ============
 
 export const STATUS_LABELS: Record<RequestStatus, string> = {
   [RequestStatus.NEW]: 'Новая',
@@ -276,8 +266,6 @@ export const PRIORITY_LABELS: Record<Priority, string> = {
   [Priority.HIGH]: 'Высокий',
   [Priority.URGENT]: 'Срочный',
 };
-
-// Removed CATEGORY_LABELS as categories are now dynamic
 
 export const ROLE_LABELS: Record<Role, string> = {
   [Role.CLIENT]: 'Клиент',

@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import type { ServiceCatalog, Category } from '../types';
 
-// Animated counter hook
 function useCounter(target: number, duration = 2000): [number, (node: HTMLDivElement | null) => void] {
   const [count, setCount] = useState(0);
   const [node, setNode] = useState<HTMLDivElement | null>(null);

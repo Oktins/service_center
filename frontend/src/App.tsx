@@ -2,13 +2,11 @@ import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Role } from './types';
 
-// Layout & UI
 import Header from './components/Header';
 import Footer from './components/Footer';
 import DashboardLayout from './components/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 
-// Public Pages
 import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
 import AboutPage from './pages/AboutPage';
@@ -19,7 +17,6 @@ import FaqPage from './pages/FaqPage';
 import ContactsPage from './pages/ContactsPage';
 import OAuth2RedirectHandler from './pages/OAuth2RedirectHandler';
 
-// Dashboard Pages
 import DashboardRedirect from './pages/dashboard/DashboardRedirect';
 import MyRequestsPage from './pages/dashboard/MyRequestsPage';
 import NewRequestPage from './pages/dashboard/NewRequestPage';

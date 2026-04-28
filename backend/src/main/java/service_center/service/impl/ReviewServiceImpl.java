@@ -35,7 +35,6 @@ public class ReviewServiceImpl implements ReviewService {
         ServiceRequest request = serviceRequestRepository.findById(serviceRequestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Заявка не найдена с ID: " + serviceRequestId));
 
-        // Отзыв можно оставить только если ремонт завершен
         if (request.getStatus() != RequestStatus.COMPLETED) {
             throw new BusinessException("Оставить отзыв можно только на завершенную заявку");
         }
@@ -59,7 +58,6 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review savedReview = reviewRepository.save(review);
 
-        // ПЕРЕСЧЕТ РЕЙТИНГА МАСТЕРА
         recalculateMasterRating(master);
 
         return mapToResponse(savedReview);
@@ -91,7 +89,7 @@ public class ReviewServiceImpl implements ReviewService {
     private void recalculateMasterRating(Master master) {
         Double avgRating = reviewRepository.calculateAverageRatingByMasterId(master.getId());
         if (avgRating != null) {
-            // Округляем до 1 знака после запятой (например, 4.7)
+
             BigDecimal roundedRating = BigDecimal.valueOf(avgRating).setScale(1, RoundingMode.HALF_UP);
             master.setRating(roundedRating);
             masterRepository.save(master);
@@ -99,19 +97,18 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private ReviewResponse mapToResponse(Review review) {
-        // Достаем имя мастера
+
         String masterName = review.getMaster().getUser().getFirstName() + " " +
                 review.getMaster().getUser().getLastName();
 
-        // Достаем имя клиента из заявки
         String clientName = review.getServiceRequest().getClient().getFirstName() + " " +
                 review.getServiceRequest().getClient().getLastName();
 
         return new ReviewResponse(
                 review.getId(),
                 review.getServiceRequest().getId(),
-                clientName,      // <-- Теперь здесь правильный String (Имя клиента)
-                masterName,      // <-- Имя мастера
+                clientName,
+                masterName,
                 review.getRating(),
                 review.getComment(),
                 review.getCreatedAt()

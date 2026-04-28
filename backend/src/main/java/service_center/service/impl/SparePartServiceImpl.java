@@ -73,7 +73,7 @@ public class SparePartServiceImpl implements SparePartService {
     }
 
     private SparePartResponse mapToResponse(SparePart part) {
-        // Вычисляем флаг lowStock на лету
+
         boolean isLowStock = part.getQuantity() <= part.getMinQuantity();
 
         return new SparePartResponse(

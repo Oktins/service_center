@@ -178,4 +178,3 @@ export default function AboutPage() {
   );
 }
 
-// No additional declarations needed as leaflet is imported dynamically

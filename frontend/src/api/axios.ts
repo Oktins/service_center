@@ -8,7 +8,6 @@ const api = axios.create({
   },
 });
 
-// Request interceptor: add Bearer token
 api.interceptors.request.use(
   (config) => {
     const url = config.url ?? '';
@@ -23,7 +22,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor: handle 401 and refresh token
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (value: unknown) => void;

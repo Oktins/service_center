@@ -4,7 +4,7 @@ public enum DispatchStatus {
     SCHEDULED,
     EN_ROUTE,
     ARRIVED,
-    IN_PROGRESS, // Добавили этот статус!
+    IN_PROGRESS,
     COMPLETED,
     CANCELLED
 }

@@ -35,8 +35,7 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
     private final ServiceRequestRepository serviceRequestRepository;
     private final UserRepository userRepository;
     private final MasterRepository masterRepository;
-    // Внимание: Убедись, что интерфейс EquipmentTypeRepository создан 
-    // (extends JpaRepository<EquipmentType, Long>)
+
     private final EquipmentTypeRepository equipmentTypeRepository;
     private final GeocodingService geocodingService;
     private final RequestStatusEventPublisher requestStatusEventPublisher;
@@ -50,7 +49,6 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
         EquipmentType equipmentType = equipmentTypeRepository.findById(dto.equipmentTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Тип оборудования не найден с ID: " + dto.equipmentTypeId()));
 
-        // Используем паттерн Builder, заложенный через @Builder в ServiceRequest
         ServiceRequest request = ServiceRequest.builder()
                 .client(client)
                 .equipmentType(equipmentType)
@@ -164,8 +162,6 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
             masterName = request.getMaster().getUser().getFirstName() + " " + request.getMaster().getUser().getLastName();
         }
 
-        // Предполагается, что в сущности EquipmentType есть поле name и метод getName().
-        // Если поле называется иначе (например, typeName), замени getName() на соответствующий метод.
         String equipmentTypeName = request.getEquipmentType() != null ? request.getEquipmentType().getName() : "Не указан";
 
         return new ServiceRequestResponse(

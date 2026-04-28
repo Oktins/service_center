@@ -18,7 +18,6 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    // 1. Оставить отзыв о завершенной заявке
     @PostMapping("/request/{serviceRequestId}")
     public ResponseEntity<ReviewResponse> create(
             @PathVariable Long serviceRequestId,
@@ -27,19 +26,16 @@ public class ReviewController {
                 .body(reviewService.create(serviceRequestId, dto));
     }
 
-    // 2. Получить отзыв по ID
     @GetMapping("/{id}")
     public ResponseEntity<ReviewResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(reviewService.getById(id));
     }
 
-    // 3. Получить отзыв для конкретной заявки
     @GetMapping("/request/{serviceRequestId}")
     public ResponseEntity<ReviewResponse> getByServiceRequestId(@PathVariable Long serviceRequestId) {
         return ResponseEntity.ok(reviewService.getByServiceRequestId(serviceRequestId));
     }
 
-    // 4. Получить все отзывы конкретного мастера (с пагинацией)
     @GetMapping("/master/{masterId}")
     public ResponseEntity<Page<ReviewResponse>> getByMasterId(
             @PathVariable Long masterId,

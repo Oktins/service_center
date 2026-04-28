@@ -21,7 +21,6 @@ public class SparePartUsageController {
 
     private final SparePartUsageService sparePartUsageService;
 
-    // 1. Списать запчасть со склада и прикрепить к заявке на ремонт
     @PostMapping("/request/{serviceRequestId}")
     public ResponseEntity<SparePartUsageResponse> usePartForRequest(
             @PathVariable Long serviceRequestId,
@@ -31,7 +30,6 @@ public class SparePartUsageController {
                 .body(mapToResponse(usage));
     }
 
-    // 2. Посмотреть, какие запчасти были потрачены на конкретную заявку
     @GetMapping("/request/{serviceRequestId}")
     public ResponseEntity<Page<SparePartUsage>> getUsagesByRequestId(
             @PathVariable Long serviceRequestId,
@@ -39,7 +37,6 @@ public class SparePartUsageController {
         return ResponseEntity.ok(sparePartUsageService.getUsagesByRequestId(serviceRequestId, pageable));
     }
 
-    // 3. Рассчитать общую стоимость всех запчастей, потраченных на ремонт
     @GetMapping("/request/{serviceRequestId}/total-cost")
     public ResponseEntity<BigDecimal> calculateTotalCost(@PathVariable Long serviceRequestId) {
         return ResponseEntity.ok(sparePartUsageService.calculateTotalCost(serviceRequestId));

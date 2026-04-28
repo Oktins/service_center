@@ -28,7 +28,6 @@ public class MasterServiceImpl implements MasterService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден с ID: " + userId));
 
-        // Проверяем, что пользователь действительно имеет роль МАСТЕР
         if (user.getRole() != Role.MASTER) {
             throw new BusinessException("Пользователь должен иметь роль MASTER для создания профиля мастера");
         }
@@ -42,7 +41,7 @@ public class MasterServiceImpl implements MasterService {
                 .specialization(specialization)
                 .experienceYears(experienceYears)
                 .isAvailable(true)
-                // rating по умолчанию ZERO благодаря инициализации в entity
+
                 .build();
 
         return mapToResponse(masterRepository.save(master));
