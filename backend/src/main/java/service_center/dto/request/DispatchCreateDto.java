@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record DispatchCreateDto(
-        @NotNull(message = "Дата выезда обязательна")
+        @NotNull(message = "Поле обязательно")
         @Future(message = "Дата выезда должна быть в будущем")
         LocalDateTime scheduledAt,
 

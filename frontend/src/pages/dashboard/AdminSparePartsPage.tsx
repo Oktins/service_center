@@ -10,6 +10,7 @@ export default function AdminSparePartsPage() {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'low'>('all');
+  const [currentPage, setCurrentPage] = useState(0);
 
   const [form, setForm] = useState<SparePartCreate>({
     name: '',
@@ -22,13 +23,13 @@ export default function AdminSparePartsPage() {
   });
 
   const { data: allParts, isLoading: allLoading, error: allError } = useQuery({
-    queryKey: ['spare-parts', 'all'],
-    queryFn: () => sparePartsApi.getAll(0, 100),
+    queryKey: ['spare-parts', 'all', currentPage],
+    queryFn: () => sparePartsApi.getAll(currentPage, 10, 'id,asc'),
   });
 
   const { data: lowParts, isLoading: lowLoading } = useQuery({
-    queryKey: ['spare-parts', 'low'],
-    queryFn: () => sparePartsApi.getLowStock(0, 100),
+    queryKey: ['spare-parts', 'low', currentPage],
+    queryFn: () => sparePartsApi.getLowStock(currentPage, 10, 'id,asc'),
   });
 
   const createMutation = useMutation({
@@ -66,6 +67,7 @@ export default function AdminSparePartsPage() {
 
   const currentData = activeTab === 'all' ? allParts : lowParts;
   const isLoading = activeTab === 'all' ? allLoading : lowLoading;
+  const totalPages = currentData?.totalPages ?? 1;
 
   return (
     <div>
@@ -83,7 +85,10 @@ export default function AdminSparePartsPage() {
 
       <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
         <button
-          onClick={() => setActiveTab('all')}
+          onClick={() => {
+            setActiveTab('all');
+            setCurrentPage(0);
+          }}
           className={`px-4 py-3 font-medium text-sm transition-all border-b-2 ${
             activeTab === 'all' 
               ? 'border-primary-600 text-primary-600' 
@@ -93,7 +98,10 @@ export default function AdminSparePartsPage() {
           Все запчасти
         </button>
         <button
-          onClick={() => setActiveTab('low')}
+          onClick={() => {
+            setActiveTab('low');
+            setCurrentPage(0);
+          }}
           className={`px-4 py-3 font-medium text-sm transition-all border-b-2 flex items-center gap-2 ${
             activeTab === 'low' 
               ? 'border-primary-600 text-primary-600' 
@@ -158,6 +166,26 @@ export default function AdminSparePartsPage() {
       
       {currentData && currentData.content.length === 0 && (
         <div className="text-center py-12 text-gray-500">Список пуст</div>
+      )}
+
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '16px', alignItems: 'center' }}>
+          <button
+            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+            style={{ padding: '6px 14px', cursor: currentPage === 0 ? 'not-allowed' : 'pointer' }}
+          >
+            ← Назад
+          </button>
+          <span>Страница {currentPage + 1} из {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+            disabled={currentPage === totalPages - 1}
+            style={{ padding: '6px 14px', cursor: currentPage === totalPages - 1 ? 'not-allowed' : 'pointer' }}
+          >
+            Вперёд →
+          </button>
+        </div>
       )}
 
       {/* Modal */}

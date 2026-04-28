@@ -2,9 +2,9 @@ import api from './axios';
 import type { SparePart, SparePartCreate, SparePartUsage, SparePartUsageCreate, Page } from '../types';
 
 export const sparePartsApi = {
-  getAll: async (page = 0, size = 20): Promise<Page<SparePart>> => {
+  getAll: async (page = 0, size = 20, sort = 'id,asc'): Promise<Page<SparePart>> => {
     const response = await api.get<Page<SparePart>>('/api/spare-parts', {
-      params: { page, size },
+      params: { page, size, sort },
     });
     return response.data;
   },
@@ -26,9 +26,9 @@ export const sparePartsApi = {
     return response.data;
   },
 
-  getLowStock: async (page = 0, size = 20): Promise<Page<SparePart>> => {
+  getLowStock: async (page = 0, size = 20, sort = 'id,asc'): Promise<Page<SparePart>> => {
     const response = await api.get<Page<SparePart>>('/api/spare-parts/low-stock', {
-      params: { page, size },
+      params: { page, size, sort },
     });
     return response.data;
   },

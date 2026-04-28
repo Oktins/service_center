@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,13 +40,15 @@ public class SparePartController {
 
     // 4. Получить список всех запчастей на складе
     @GetMapping
-    public ResponseEntity<Page<SparePartResponse>> getAll(Pageable pageable) {
+    public ResponseEntity<Page<SparePartResponse>> getAll(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(sparePartService.getAll(pageable));
     }
 
     // 5. Получить список запчастей, которые нужно докупить (остаток <= minQuantity)
     @GetMapping("/low-stock")
-    public ResponseEntity<Page<SparePartResponse>> getLowStockParts(Pageable pageable) {
+    public ResponseEntity<Page<SparePartResponse>> getLowStockParts(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(sparePartService.getLowStockParts(pageable));
     }
 

@@ -3,9 +3,9 @@ import type { ServiceRequest, ServiceRequestCreate, Page } from '../types';
 import { RequestStatus } from '../types';
 
 export const requestsApi = {
-  getAll: async (page = 0, size = 20): Promise<Page<ServiceRequest>> => {
+  getAll: async (page = 0, size = 20, sort = 'id,asc'): Promise<Page<ServiceRequest>> => {
     const response = await api.get<Page<ServiceRequest>>('/api/service-requests', {
-      params: { page, size },
+      params: { page, size, sort },
     });
     return response.data;
   },

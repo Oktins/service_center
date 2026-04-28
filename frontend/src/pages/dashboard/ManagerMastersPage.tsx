@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { mastersApi } from '../../api/masters';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -6,11 +7,13 @@ import { Star, CheckCircle, XCircle } from 'lucide-react';
 
 export default function ManagerMastersPage() {
   const queryClient = useQueryClient();
+  const [currentPage, setCurrentPage] = useState(0);
 
   const { data: masters, isLoading, error } = useQuery({
-    queryKey: ['masters-admin'],
-    queryFn: () => mastersApi.getAll(0, 100),
+    queryKey: ['masters-admin', currentPage],
+    queryFn: () => mastersApi.getAll(currentPage, 10, 'id,asc'),
   });
+  const totalPages = masters?.totalPages ?? 1;
 
   const toggleAvailability = useMutation({
     mutationFn: ({ id, isAvailable }: { id: number, isAvailable: boolean }) => 
@@ -71,6 +74,26 @@ export default function ManagerMastersPage() {
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '16px', alignItems: 'center' }}>
+          <button
+            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+            style={{ padding: '6px 14px', cursor: currentPage === 0 ? 'not-allowed' : 'pointer' }}
+          >
+            ← Назад
+          </button>
+          <span>Страница {currentPage + 1} из {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+            disabled={currentPage === totalPages - 1}
+            style={{ padding: '6px 14px', cursor: currentPage === totalPages - 1 ? 'not-allowed' : 'pointer' }}
+          >
+            Вперёд →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

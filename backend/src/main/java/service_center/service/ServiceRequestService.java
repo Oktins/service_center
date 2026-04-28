@@ -12,6 +12,8 @@ public interface ServiceRequestService {
 
     ServiceRequestResponse getById(Long id);
 
+    Page<ServiceRequestResponse> getAll(Pageable pageable);
+
     Page<ServiceRequestResponse> getByClientId(Long clientId, Pageable pageable);
 
     Page<ServiceRequestResponse> getByMasterId(Long masterId, Pageable pageable);

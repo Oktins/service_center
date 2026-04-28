@@ -11,10 +11,11 @@ import { Filter } from 'lucide-react';
 export default function ManagerRequestsPage() {
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<RequestStatus | 'ALL'>('ALL');
+  const [currentPage, setCurrentPage] = useState(0);
 
   const { data: requests, isLoading, error, refetch } = useQuery({
-    queryKey: ['manager-requests'],
-    queryFn: () => requestsApi.getAll(0, 100),
+    queryKey: ['manager-requests', currentPage],
+    queryFn: () => requestsApi.getAll(currentPage, 10, 'id,asc'),
   });
 
   const { data: masters } = useQuery({
@@ -34,6 +35,7 @@ export default function ManagerRequestsPage() {
     statusFilter === 'ALL'
       ? requests?.content
       : requests?.content.filter((r) => r.status === statusFilter);
+  const totalPages = requests?.totalPages ?? 1;
 
   return (
     <div>
@@ -121,6 +123,26 @@ export default function ManagerRequestsPage() {
           <div className="text-center py-8 text-gray-500">Заявок не найдено</div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '16px', alignItems: 'center' }}>
+          <button
+            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+            style={{ padding: '6px 14px', cursor: currentPage === 0 ? 'not-allowed' : 'pointer' }}
+          >
+            ← Назад
+          </button>
+          <span>Страница {currentPage + 1} из {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+            disabled={currentPage === totalPages - 1}
+            style={{ padding: '6px 14px', cursor: currentPage === totalPages - 1 ? 'not-allowed' : 'pointer' }}
+          >
+            Вперёд →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersApi } from '../../api/users';
 import { Role, ROLE_LABELS } from '../../types';
@@ -14,11 +15,13 @@ const ROLE_ICONS: Record<Role, React.ReactNode> = {
 
 export default function AdminUsersPage() {
   const queryClient = useQueryClient();
+  const [currentPage, setCurrentPage] = useState(0);
 
   const { data: users, isLoading, error, refetch } = useQuery({
-    queryKey: ['users-admin'],
-    queryFn: () => usersApi.getAll(0, 100),
+    queryKey: ['users-admin', currentPage],
+    queryFn: () => usersApi.getAll(currentPage, 10, 'id,asc'),
   });
+  const totalPages = users?.totalPages ?? 1;
 
   const roleMutation = useMutation({
     mutationFn: ({ id, role }: { id: number, role: Role }) => usersApi.updateRole(id, { role }),
@@ -90,6 +93,26 @@ export default function AdminUsersPage() {
           <div className="text-center py-8 text-gray-500">Пользователей не найдено</div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '16px', alignItems: 'center' }}>
+          <button
+            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+            style={{ padding: '6px 14px', cursor: currentPage === 0 ? 'not-allowed' : 'pointer' }}
+          >
+            ← Назад
+          </button>
+          <span>Страница {currentPage + 1} из {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+            disabled={currentPage === totalPages - 1}
+            style={{ padding: '6px 14px', cursor: currentPage === totalPages - 1 ? 'not-allowed' : 'pointer' }}
+          >
+            Вперёд →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

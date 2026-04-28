@@ -5,18 +5,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record RegisterRequest(
-        @NotBlank(message = "Email обязателен")
+        @NotBlank(message = "Поле не может быть пустым")
         @Email(message = "Некорректный email")
         String email,
 
-        @NotBlank(message = "Пароль обязателен")
-        @Size(min = 6, message = "Пароль минимум 6 символов")
+        @NotBlank(message = "Поле не может быть пустым")
+        @Size(min = 6, message = "Пароль должен содержать минимум 6 символов")
         String password,
 
-        @NotBlank(message = "Имя обязательно")
+        @NotBlank(message = "Поле не может быть пустым")
         String firstName,
 
-        @NotBlank(message = "Фамилия обязательна")
+        @NotBlank(message = "Поле не может быть пустым")
         String lastName,
 
         String phone

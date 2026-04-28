@@ -1,13 +1,13 @@
 package service_center.dto.request;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public record SparePartUsageDto(
-        @NotNull(message = "ID запчасти обязателен")
+        @NotNull(message = "Поле обязательно")
         Long sparePartId,
 
-        @NotNull
-        @Min(value = 1, message = "Количество минимум 1")
+        @NotNull(message = "Поле обязательно")
+        @Positive(message = "Значение должно быть положительным")
         Integer quantity
 ) {}

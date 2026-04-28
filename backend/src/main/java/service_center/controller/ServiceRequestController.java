@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +15,7 @@ import service_center.dto.response.ServiceRequestResponse;
 import service_center.service.ServiceRequestService;
 
 @RestController
-@RequestMapping("/api/service-requests")
+@RequestMapping({"/api/service-requests", "/api/requests"})
 @RequiredArgsConstructor
 public class ServiceRequestController {
 
@@ -34,11 +36,17 @@ public class ServiceRequestController {
         return ResponseEntity.ok(serviceRequestService.getById(id));
     }
 
+    @GetMapping
+    public ResponseEntity<Page<ServiceRequestResponse>> getAll(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(serviceRequestService.getAll(pageable));
+    }
+
     // 3. Получить все заявки конкретного клиента (с пагинацией)
     @GetMapping("/client/{clientId}")
     public ResponseEntity<Page<ServiceRequestResponse>> getByClientId(
             @PathVariable Long clientId,
-            Pageable pageable) {
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(serviceRequestService.getByClientId(clientId, pageable));
     }
 
@@ -46,7 +54,7 @@ public class ServiceRequestController {
     @GetMapping("/master/{masterId}")
     public ResponseEntity<Page<ServiceRequestResponse>> getByMasterId(
             @PathVariable Long masterId,
-            Pageable pageable) {
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(serviceRequestService.getByMasterId(masterId, pageable));
     }
 
@@ -54,7 +62,7 @@ public class ServiceRequestController {
     @GetMapping("/status")
     public ResponseEntity<Page<ServiceRequestResponse>> getByStatus(
             @RequestParam RequestStatus status,
-            Pageable pageable) {
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(serviceRequestService.getByStatus(status, pageable));
     }
 

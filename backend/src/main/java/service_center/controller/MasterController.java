@@ -3,6 +3,8 @@ package service_center.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,13 +42,15 @@ public class MasterController {
 
     // 4. Получить список всех мастеров (с пагинацией)
     @GetMapping
-    public ResponseEntity<Page<MasterResponse>> getAll(Pageable pageable) {
+    public ResponseEntity<Page<MasterResponse>> getAll(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(masterService.getAll(pageable));
     }
 
     // 5. Получить список только доступных мастеров (для назначения на выезд)
     @GetMapping("/available")
-    public ResponseEntity<Page<MasterResponse>> getAvailableMasters(Pageable pageable) {
+    public ResponseEntity<Page<MasterResponse>> getAvailableMasters(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(masterService.getAvailableMasters(pageable));
     }
 

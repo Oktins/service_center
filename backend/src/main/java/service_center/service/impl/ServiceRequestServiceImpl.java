@@ -82,6 +82,13 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ServiceRequestResponse> getAll(Pageable pageable) {
+        return serviceRequestRepository.findAll(pageable)
+                .map(this::mapToResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<ServiceRequestResponse> getByClientId(Long clientId, Pageable pageable) {
         return serviceRequestRepository.findAllByClientId(clientId, pageable)
                 .map(this::mapToResponse);

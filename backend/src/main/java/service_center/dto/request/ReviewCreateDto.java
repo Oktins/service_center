@@ -5,11 +5,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public record ReviewCreateDto(
-        @NotNull(message = "ID заявки обязателен")
+        @NotNull(message = "Поле обязательно")
         Long serviceRequestId,
 
-        @NotNull
-        @Min(value = 1) @Max(value = 5)
+        @NotNull(message = "Поле обязательно")
+        @Min(value = 1)
+        @Max(value = 5)
         Integer rating,
 
         String comment

@@ -2,9 +2,9 @@ import api from './axios';
 import type { Master, Page } from '../types';
 
 export const mastersApi = {
-  getAll: async (page = 0, size = 20): Promise<Page<Master>> => {
+  getAll: async (page = 0, size = 20, sort = 'id,asc'): Promise<Page<Master>> => {
     const response = await api.get<Page<Master>>('/api/masters', {
-      params: { page, size },
+      params: { page, size, sort },
     });
     return response.data;
   },
